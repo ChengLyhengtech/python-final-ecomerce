@@ -1,0 +1,110 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+    <!-- Hero Slider / Banner Section -->
+    <section class="relative rounded-2xl overflow-hidden shadow-lg bg-slate-900 group">
+        <a href="{{ url_for('products') }}" class="block relative h-[350px] md:h-[450px] w-full">
+            <img src="https://st-gdx.dancf.com/gaodingx/0/uxms/design/20210122-101837-cf22.png"
+                 alt="Top Sale Slider"
+                 class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.75]">
+        </a>
+
+        <!-- Absolute Content Overlay -->
+        <div class="absolute inset-0 flex flex-col justify-center items-start p-8 sm:p-12 md:p-16 pointer-events-none">
+            <span class="inline-block bg-amber-500 text-slate-950 text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-4 shadow-sm">
+                Limited Time Only
+            </span>
+            <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow-md mb-2">
+                Summer Collection
+            </h2>
+            <p class="text-sm sm:text-lg text-slate-200 max-w-md drop-shadow mb-6">
+                Explore our latest arrivals. Up to 50% off everything!
+            </p>
+            <a href="{{ url_for('products') }}"
+               class="pointer-events-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-slate-950 bg-white hover:bg-slate-100 shadow-md transform hover:-translate-y-0.5 transition-all duration-200">
+                Shop Now
+                <i class="fas fa-arrow-right ml-2 text-xs"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Dynamic Featured Products Section -->
+    <section class="space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+            <h3 class="text-2xl font-bold tracking-tight text-slate-900">Featured Products</h3>
+            <a href="{{ url_for('products') }}" class="group text-sm font-semibold text-indigo-600 hover:text-indigo-500 flex items-center gap-1 transition-colors">
+                View All
+                <span class="block transform group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </a>
+        </div>
+
+        <!-- Fully Responsive Grid Layout -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for itm in item %}
+            <div class="group flex flex-col bg-white rounded-xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-slate-300 transform hover:-translate-y-1 transition-all duration-300">
+
+                <!-- Product Image Window -->
+                <div class="relative bg-slate-100 aspect-square overflow-hidden w-full">
+                    <a href="{{ url_for('view_product', item_id=itm.id) }}" class="block w-full h-full">
+                        <img src="{{ itm.image }}" alt="{{ itm.title }}" class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500 ease-in-out">
+                    </a>
+
+                    <!-- Badge Notification System -->
+                    <div class="absolute top-3 left-3 z-10">
+                        {% if itm.discount %}
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-rose-600 text-white shadow-sm">
+                                -{{ itm.discount }}%
+                            </span>
+                        {% else %}
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-600 text-white shadow-sm">
+                                TOP
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Product Text Configurations -->
+                <div class="p-4 flex-grow flex flex-col justify-between space-y-2">
+                    <div>
+                        <p class="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">{{ itm.category }}</p>
+                        <h4 class="text-base font-semibold text-slate-800 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+                            {{ itm.title }}
+                        </h4>
+                    </div>
+
+                    <div class="flex items-baseline gap-2 pt-1">
+                        {% if itm.old_price %}
+                            <span class="text-sm font-medium text-slate-400 line-through">${{ itm.old_price }}</span>
+                            <span class="text-lg font-bold text-rose-600">${{ itm.price }}</span>
+                        {% else %}
+                            <span class="text-lg font-bold text-slate-900">${{ itm.price }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Action Button Matrix Footer -->
+               <div class="p-4 pt-0 grid grid-cols-3 gap-2 border-t border-slate-50 mt-auto">
+    <button class="inline-flex justify-center items-center py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors duration-200" title="Add to Favourites">
+        <i class="far fa-heart"></i>
+    </button>
+
+    <a href="{{ url_for('products') }}" class="inline-flex justify-center items-center py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200" title="View Details">
+        <i class="fas fa-search"></i>
+    </a>
+
+    <form action="{{ url_for('add_to_cart', item_id=itm.id) }}" method="POST" class="w-full">
+        <button type="submit" class="w-full inline-flex justify-center items-center py-2 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-200" title="Add to Cart">
+            <i class="fas fa-shopping-cart"></i>
+        </button>
+    </form>
+</div>
+
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+{% endblock %}

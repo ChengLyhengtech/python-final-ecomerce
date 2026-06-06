@@ -1,0 +1,86 @@
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+
+        <!-- Logo Brand -->
+        <div class="flex items-center">
+            <a href="{{ url_for('home') }}" class="flex items-center gap-2 text-xl font-black tracking-wider text-slate-900 group">
+                <i class="fas fa-shopping-bag text-indigo-600 transition-transform group-hover:scale-110"></i>
+                DAERKNESS SHOP
+            </a>
+        </div>
+
+        <!-- Navigation Links Matrix -->
+        <nav class="hidden md:flex space-x-1">
+            <a href="{{ url_for('home') }}"
+               class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+               {{ 'bg-indigo-50 text-indigo-600 font-semibold' if request.endpoint == 'home' else 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+                Home
+            </a>
+            <a href="{{ url_for('products') }}"
+               class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+               {{ 'bg-indigo-50 text-indigo-600 font-semibold' if request.endpoint == 'products' else 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+                Shop All
+            </a>
+            <a href="{{ url_for('contact') }}"
+               class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+               {{ 'bg-indigo-50 text-indigo-600 font-semibold' if request.endpoint == 'contact' else 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+                Contact Us
+            </a>
+            <a href="{{ url_for('about') }}"
+               class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
+               {{ 'bg-indigo-50 text-indigo-600 font-semibold' if request.endpoint == 'about' else 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
+                About Us
+            </a>
+        </nav>
+
+        <!-- Functional Icon Configuration & Auth -->
+        <div class="flex items-center gap-4">
+
+            <!-- Favorites Action Link -->
+            <a href="{{ url_for('favorites') }}"
+               title="Favorites"
+               class="relative p-2 rounded-lg transition-colors group {{ 'text-indigo-600 bg-indigo-50/60' if request.endpoint == 'favorites' else 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' }}">
+                <i class="fas fa-heart text-lg"></i>
+                <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-600 text-[10px] font-bold text-white ring-2 ring-white">
+                    3
+                </span>
+            </a>
+
+            <!-- Cart Action Link -->
+            <a href="{{ url_for('cart') }}"
+               title="Cart"
+               class="relative p-2 rounded-lg transition-colors group {{ 'text-indigo-600 bg-indigo-50/60' if request.endpoint == 'cart' else 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' }}">
+                <i class="fas fa-shopping-cart text-lg"></i>
+               {% if cart_count > 0 %}
+    <span class="cart-badge" style="
+        position: absolute;
+        top: -8px;
+        right: -10px;
+        background-color: #38a169; /* Dynamic Green color matches your screenshot */
+        color: white;
+        font-size: 11px;
+        font-weight: bold;
+        border-radius: 50%;
+        padding: 2px 6px;
+        min-width: 12px;
+        text-align: center;
+        line-height: 12px;
+    ">
+        {{ cart_count }}
+    </span>
+    {% endif %}
+            </a>
+
+            <!-- Border Separator -->
+            <span class="h-6 w-px bg-slate-200 hidden sm:block" aria-hidden="true"></span>
+
+            <!-- Authentication Entry Button -->
+            <div class="auth-nav">
+                <a href="{{ url_for('login') }}"
+                   class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold rounded-lg text-white bg-slate-900 hover:bg-indigo-600 shadow-sm hover:shadow transition-all duration-200">
+                    Login
+                </a>
+            </div>
+        </div>
+    </div>
+</header>

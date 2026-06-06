@@ -1,0 +1,24 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="page-title">My Wishlist</h2>
+    
+    <div class="product-grid">
+        <div class="product-card">
+            <div class="product-image">
+                <img src="https://i.pinimg.com/736x/f4/de/3c/f4de3c3fdf3dac19cb525da78886af76.jpg" alt="">
+                <button class="remove-wishlist" title="Remove">&times;</button>
+            </div>
+            <div class="product-details">
+                <h4>Leather Crossbody Bag</h4>
+                <p class="product-category">Accessories</p>
+                <span class="price">$120.00</span>
+            </div>
+            <button class="action-btn cart-btn" style="width: 100%; border-radius: 0 0 8px 8px;">
+                Add to Cart
+            </button>
+        </div>
+        </div>
+</div>
+{% endblock %}

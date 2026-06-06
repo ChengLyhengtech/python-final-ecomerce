@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Static Shop</title>
+    <!-- Tailwind CSS Script CDN (For production, a build step is recommended) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../.././static/css/style.css">
+</head>
+<body class="flex flex-col min-h-full text-slate-800 antialiased">
+
+{% include 'share/header.html' %}
+
+    <!-- Pushes footer down on empty or short pages -->
+    <main class="flex-grow">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+{% include 'share/footer.html' %}
+
+</body>
+</html>

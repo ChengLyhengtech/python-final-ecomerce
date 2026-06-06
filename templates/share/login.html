@@ -1,0 +1,64 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="auth-page-container">
+    <div class="auth-card">
+
+        <!-- Header Branding Block -->
+        <div class="auth-header">
+            <h2>Welcome Back</h2>
+            <p>Please log in to your CLH SHOP account</p>
+        </div>
+
+
+        <!-- Core Authentication Form -->
+        <form action="{{ url_for('login') }}" method="POST" class="auth-form">
+
+            <div class="form-group-field">
+                <label for="username">Username or Email</label>
+                <div class="input-icon-wrapper">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="text" id="username" name="username" placeholder="Enter your username or email" required>
+                </div>
+            </div>
+
+            <div class="form-group-field">
+                <div class="label-row-split">
+                    <label for="password">Password</label>
+                    <a href="#" class="forgot-password-link">Forgot Password?</a>
+                </div>
+                <div class="input-icon-wrapper">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+            </div>
+
+            <!-- Optional Remember Utility Toggle -->
+            <div class="form-checkbox-row">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember">Keep me logged in</label>
+            </div>
+
+            <button type="submit" class="btn-auth-action">Log In</button>
+        </form>
+
+        <!-- Divider Interface Elements -->
+        <div class="auth-divider">
+            <span>or sign in with</span>
+        </div>
+
+        <!-- Social Integrations Actions -->
+        <div class="social-auth-row">
+            <button class="social-btn google-auth"><i class="fab fa-google"></i> Google</button>
+            <button class="social-btn facebook-auth"><i class="fab fa-facebook-f"></i> Facebook</button>
+        </div>
+
+        <!-- Structural Redirection Footer -->
+        <div class="auth-footer-link">
+            <p>Don't have an account? <a href="{{ url_for('register') }}">Create an account</a></p>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="container checkout-container">
+    
+   <div class="checkout-form-section">
+    <h3><i class="fas fa-truck"></i> Shipping Information</h3>
+    <form id="shippingForm" action="{{ url_for('place_order') }}" method="POST">
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="buyer_name" placeholder="e.g. Sok Chan" required>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="buyer_phone" placeholder="e.g. 012 345 678" required>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="buyer_email" placeholder="name@example.com" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Delivery Address (Phnom Penh / Provinces)</label>
+            <input type="text" name="buyer_address" placeholder="Street number, Sangkat, Khan..." required>
+        </div>
+        <div class="form-group">
+            <label>Order Notes (Optional)</label>
+            <textarea name="order_notes" placeholder="Instructions for delivery driver..."></textarea>
+        </div>
+    </form>
+</div>
+
+    <div class="checkout-payment-section">
+        <div class="payment-box">
+            <div class="khqr-header">
+                <span class="khqr-logo-text">KHQR</span>
+                <span class="khqr-sub text">Bakong Ecosystem</span>
+            </div>
+            
+            <div class="khqr-body">
+                <p class="merchant-name">MY FLASK STORE CO., LTD.</p>
+                <p class="currency-tag">USD</p>
+                
+                <div class="qr-code-wrapper">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=KHQR_MOCK_PAYMENT_TOTAL_{{ total_price }}" alt="KHQR Code">
+                </div>
+                
+                <h2 class="pay-amount">${{ "%.2f"|format(total_price) }}</h2>
+                <p class="scan-instruction">Scan with Bakong or any Mobile Banking App in Cambodia to pay</p>
+            </div>
+
+            <div class="payment-footer-actions">
+                <button type="submit" form="shippingForm" class="mock-confirm-btn">
+                    <i class="fas fa-check-circle"></i> I Have Paid via KHQR
+                </button>
+                <a href="{{ url_for('cart') }}" class="cancel-link">Cancel and Go Back</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .checkout-container { display: flex; gap: 40px; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 1100px; margin: 0 auto; }
+    .checkout-form-section { flex: 1.2; background: #fff; padding: 30px; border-radius: 12px; border: 1px solid #edf2f7; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+    .checkout-form-section h3 { margin-top: 0; font-size: 20px; color: #1a202c; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; margin-bottom: 25px; }
+    
+    /* Standard Input Styling layouts */
+    .form-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .form-row { display: flex; gap: 20px; }
+    .form-row .form-group { flex: 1; }
+    .form-group label { font-size: 14px; font-weight: 600; color: #4a5568; }
+    .form-group input, .form-group textarea { padding: 12px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 14px; outline: none; transition: border 0.2s; }
+    .form-group input:focus, .form-group textarea:focus { border-color: #1a202c; }
+    .form-group textarea { height: 80px; resize: none; }
+
+    /* KHQR Payment Interface Design Layout Frameworks */
+    .checkout-payment-section { flex: 0.8; }
+    .payment-box { background: #fff; border-radius: 16px; border: 2px solid #e2e8f0; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+    
+    /* Dynamic Red/Blue KHQR Branding Emulation styling */
+    .khqr-header { background: linear-gradient(135deg, #e53e3e 0%, #2b6cb0 100%); color: white; padding: 15px; font-weight: 800; font-size: 22px; letter-spacing: 1px; }
+    .khqr-sub { display: block; font-size: 11px; font-weight: 400; opacity: 0.9; letter-spacing: 0; }
+    
+    .khqr-body { padding: 30px 20px; background: #fafafa; }
+    .merchant-name { font-size: 14px; font-weight: 700; color: #2d3748; margin: 0 0 5px 0; }
+    .currency-tag { font-size: 12px; font-weight: 600; color: #718096; margin: 0 0 20px 0; }
+    
+    .qr-code-wrapper { background: white; padding: 15px; display: inline-block; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.03); margin-bottom: 20px; }
+    .qr-code-wrapper img { display: block; }
+    
+    .pay-amount { font-size: 32px; font-weight: 800; color: #1a202c; margin: 0 0 10px 0; }
+    .scan-instruction { font-size: 12px; color: #718096; line-height: 1.5; max-width: 220px; margin: 0 auto; }
+
+    /* Footer Triggers fields styling */
+    .payment-footer-actions { padding: 25px; background: white; border-top: 1px solid #edf2f7; display: flex; flex-direction: column; gap: 12px; }
+    .mock-confirm-btn { background: #38a169; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
+    .mock-confirm-btn:hover { background: #2f855a; }
+    .cancel-link { font-size: 14px; color: #718096; text-decoration: none; }
+    .cancel-link:hover { color: #e53e3e; }
+
+    /* Mobile Responsive Scale Adjustments structural CSS code */
+    @media (max-width: 768px) {
+        .checkout-container { flex-direction: column; gap: 30px; }
+        .form-row { flex-direction: column; gap: 0; }
+    }
+</style>
+{% endblock %}
