@@ -50,23 +50,14 @@
                 <p>{{ item.description }}</p>
             </div>
 
-            <form action="#" method="POST" class="purchase-form">
-                <div class="quantity-selector">
-                    <label for="quantity">Quantity:</label>
-                    <div class="qty-input-group">
-                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="10">
-                    </div>
-                </div>
-
-                <div class="detail-actions">
+              <div class="detail-actions flex items-center">
                    <form action="{{ url_for('add_to_cart', item_id=item.id) }}" method="POST">
-                        <button type="submit">Add to Cart</button>
+                        <button class="bg-blue-400 px-3 py-2 rounded-sm" type="submit">Add to Cart</button>
                     </form>
                     <button type="button" class="btn-wishlist" title="Add to Wishlist">
                         <i class="far fa-heart"></i>
                     </button>
                 </div>
-            </form>
         </div>
     </div>
 
