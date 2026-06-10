@@ -1,150 +1,119 @@
 {% extends "customer/layout.html" %}
 
 {% block content %}
-<div class="container shop-container">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
     
-    <aside class="shop-sidebar">
-        <div class="filter-group">
-            <h4>Categories</h4>
-            <ul>
-                <li><input type="checkbox" id="cat1" name="category" value="men's clothing"> <label for="cat1">Men's Clothing</label></li>
-                <li><input type="checkbox" id="cat2" name="category" value="women's clothing"> <label for="cat2">Women's Clothing</label></li>
-                <li><input type="checkbox" id="cat3" name="category" value="jewelery"> <label for="cat3">Jewelry</label></li>
-                <li><input type="checkbox" id="cat4" name="category" value="electronics"> <label for="cat4">Electronics</label></li>
+    <!-- Sidebar / Filters -->
+    <aside class="w-full lg:w-64 flex-shrink-0 space-y-6">
+        <!-- Categories -->
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+            <h4 class="text-lg font-bold text-slate-900 mb-4 pb-3 border-b border-slate-100">Categories</h4>
+            <ul class="space-y-3">
+                <li>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" name="category" value="men's clothing" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"> 
+                        <span class="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors">Men's Clothing</span>
+                    </label>
+                </li>
+                <li>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" name="category" value="women's clothing" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"> 
+                        <span class="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors">Women's Clothing</span>
+                    </label>
+                </li>
+                <li>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" name="category" value="jewelery" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"> 
+                        <span class="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors">Jewelry</span>
+                    </label>
+                </li>
+                <li>
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" name="category" value="electronics" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"> 
+                        <span class="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors">Electronics</span>
+                    </label>
+                </li>
             </ul>
         </div>
 
-        <div class="filter-group">
-            <h4>Price Range</h4>
-            <div class="price-input">
-                <input type="number" placeholder="Min" name="min_price">
-                <span>-</span>
-                <input type="number" placeholder="Max" name="max_price">
+        <!-- Price Range -->
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+            <h4 class="text-lg font-bold text-slate-900 mb-4 pb-3 border-b border-slate-100">Price Range</h4>
+            <div class="flex items-center gap-2 mb-4">
+                <input type="number" placeholder="Min" name="min_price" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <span class="text-slate-400">-</span>
+                <input type="number" placeholder="Max" name="max_price" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500">
             </div>
-            <button class="btn-filter">Apply Filter</button>
+            <button class="w-full py-2.5 bg-slate-900 hover:bg-indigo-600 text-white text-sm font-semibold rounded-lg transition-all shadow-sm">Apply Filter</button>
         </div>
     </aside>
 
-    <section class="shop-main">
-        <div class="shop-header">
-            <h2>All Products Matrix</h2>
-            <div class="shop-sort">
-                <select>
+    <!-- Main Content -->
+    <section class="flex-1 space-y-6">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200">
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900">All Products Matrix</h2>
+            <div class="relative">
+                <select class="appearance-none bg-white border border-slate-300 text-slate-700 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium shadow-sm cursor-pointer">
                     <option>Default Sorting</option>
                     <option>Price: Low to High</option>
                     <option>Price: High to Low</option>
                 </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                    <i class="fas fa-chevron-down text-xs"></i>
+                </div>
             </div>
         </div>
 
-        <div class="product-grid">
+        <!-- Product Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {% for itm in item %}
-            <div class="product-card">
-                <div class="product-image">
-                    <a href="{{ url_for('view_product', item_id=itm.id) }}">
-                        <img src="{{ itm.image }}" alt="{{ itm.title }}">
+            <div class="group flex flex-col bg-white rounded-xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-slate-300 transform hover:-translate-y-1 transition-all duration-300">
+
+                <!-- Product Image Window -->
+                <div class="relative bg-slate-100 aspect-square overflow-hidden w-full p-4">
+                    <a href="{{ url_for('view_product', item_id=itm.id) }}" class="block w-full h-full">
+                        <img src="{{ itm.image }}" alt="{{ itm.title }}" class="w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-500 ease-in-out mix-blend-multiply">
                     </a>
                 </div>
 
-                <div class="product-details">
-                    <p class="product-category">{{ itm.category }}</p>
-                    <h4 class="product-title">
-                        <a href="{{ url_for('view_product', item_id=itm.id) }}">{{ itm.title }}</a>
-                    </h4>
+                <!-- Product Text Configurations -->
+                <div class="p-4 flex-grow flex flex-col justify-between space-y-2">
+                    <div>
+                        <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">{{ itm.category }}</p>
+                        <h4 class="text-sm font-semibold text-slate-800 line-clamp-2 group-hover:text-indigo-600 transition-colors leading-snug">
+                            <a href="{{ url_for('view_product', item_id=itm.id) }}">{{ itm.title }}</a>
+                        </h4>
+                    </div>
 
-                    <div class="product-meta-row">
-                        <span class="price">${{ "%.2f"|format(itm.price) }}</span>
-                        <span class="rating-badge">★ {{ itm.rating.rate }}</span>
+                    <div class="flex items-center justify-between pt-2">
+                        <span class="text-base sm:text-lg font-bold text-slate-900">${{ "%.2f"|format(itm.price) }}</span>
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">
+                            ★ {{ itm.rating.rate }}
+                        </span>
                     </div>
                 </div>
 
-                <div class="product-actions">
-                    <button class="action-btn fav-btn" title="Add to Favourites">
+                <!-- Action Button Matrix Footer -->
+               <div class="p-3 pt-0 grid grid-cols-3 gap-2 border-t border-slate-50 mt-auto">
+                    <button class="inline-flex justify-center items-center py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors duration-200" title="Add to Favourites">
                         <i class="far fa-heart"></i>
                     </button>
 
-                    <a href="{{ url_for('view_product', item_id=itm.id) }}" class="action-btn view-btn" title="Quick View">
+                    <a href="{{ url_for('view_product', item_id=itm.id) }}" class="inline-flex justify-center items-center py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200" title="View Details">
                         <i class="fas fa-search"></i>
                     </a>
 
-{#                    <form action="{{ url_for('add_to_cart', item_id=itm.id) }}" method="POST" style="flex: 1; display: flex;">#}
-{#                        <button type="submit" class="action-btn cart-btn" title="Add to Cart" style="width: 100%; border: none; height: 100%;">#}
-{#                            <i class="fas fa-shopping-cart"></i>#}
-{#                        </button>#}
-{#                    </form>#}
+                    <form action="{{ url_for('add_to_cart', item_id=itm.id) }}" method="POST" class="w-full">
+                        <button type="submit" class="w-full inline-flex justify-center items-center py-2 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-200" title="Add to Cart">
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                    </form>
                 </div>
+
             </div>
             {% endfor %}
         </div>
     </section>
 </div>
-
-<style>
-    /* Structural Page Grid Wrappers */
-    .shop-container { display: flex; gap: 40px; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 1200px; margin: 0 auto; }
-
-    /* Left Sidebar Filter Section */
-    .shop-sidebar { width: 260px; flex-shrink: 0; background: #fff; border: 1px solid #edf2f7; border-radius: 10px; padding: 25px; height: fit-content; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-    .filter-group { margin-bottom: 30px; }
-    .filter-group:last-child { margin-bottom: 0; }
-    .filter-group h4 { font-size: 16px; font-weight: 700; color: #1a202c; margin: 0 0 15px 0; border-bottom: 2px solid #edf2f7; padding-bottom: 8px; }
-    .filter-group ul { list-style: none; padding: 0; margin: 0; }
-    .filter-group li { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 14px; color: #4a5568; cursor: pointer; }
-    .filter-group input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #1a202c; }
-    .filter-group label { cursor: pointer; text-transform: capitalize; user-select: none; }
-
-    /* Price inputs fields controls */
-    .price-input { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
-    .price-input input { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 14px; text-align: center; }
-    .price-input span { color: #a0aec0; }
-    .btn-filter { width: 100%; background: #1a202c; color: #fff; border: none; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-    .btn-filter:hover { background: #2d3748; }
-
-    /* Right Main Catalog Grid Section */
-    .shop-main { flex-grow: 1; }
-    .shop-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #edf2f7; padding-bottom: 15px; }
-    .shop-header h2 { font-size: 22px; font-weight: 700; color: #1a202c; margin: 0; }
-    .shop-sort select { padding: 10px 16px; border: 1px solid #cbd5e0; border-radius: 6px; background: #fff; font-size: 14px; color: #4a5568; outline: none; cursor: pointer; }
-
-    /* Interactive Cards Matrix CSS Layout */
-    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
-    .product-card { background: #fff; border: 1px solid #edf2f7; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; position: relative; }
-    .product-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-
-    .product-image { padding: 20px; background: #fff; height: 200px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #f7fafc; overflow: hidden; }
-    .product-image img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s ease; }
-    .product-card:hover .product-image img { transform: scale(1.05); }
-
-    .product-details { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
-    .product-category { font-size: 11px; text-transform: uppercase; font-weight: 700; color: #2b6cb0; margin: 0 0 6px 0; letter-spacing: 0.5px; }
-    .product-title { font-size: 14px; font-weight: 600; line-height: 1.4; margin: 0 0 12px 0; flex-grow: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .product-title a { color: #2d3748; text-decoration: none; }
-    .product-title a:hover { color: #2b6cb0; }
-
-    .product-meta-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
-    .price { font-size: 16px; font-weight: 700; color: #1a202c; }
-    .rating-badge { font-size: 12px; font-weight: 600; color: #d97706; background: #fef3c7; padding: 2px 6px; border-radius: 4px; }
-
-    /* Action Trigger Overlays */
-    .product-actions { display: flex; border-top: 1px solid #edf2f7; background: #f7fafc; align-items: center; }
-    .action-btn { flex: 1; background: none; border: none; padding: 12px 0; text-align: center; color: #4a5568; font-size: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; text-decoration: none; border-right: 1px solid #edf2f7; }
-    .action-btn:last-child { border-right: none; }
-
-    .fav-btn:hover { color: #e53e3e; background: #fff5f5; }
-    .view-btn:hover { color: #2b6cb0; background: #ebf8ff; }
-    .cart-btn:hover { color: #38a169; background: #f0fff4; }
-
-    /* Responsive Breakpoints grid scaling */
-    @media (max-width: 992px) {
-        .shop-container { flex-direction: column; gap: 30px; }
-        .shop-sidebar { width: 100%; }
-    }
-    @media (max-width: 480px) {
-        .product-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .product-image { height: 150px; padding: 10px; }
-        .product-title { font-size: 13px; }
-        .price { font-size: 14px; }
-        .action-btn { padding: 10px 0; font-size: 12px; }
-    }
-</style>
 {% endblock %}

@@ -5,11 +5,12 @@
         <div class="flex items-center">
             <a href="{{ url_for('home') }}" class="flex items-center gap-2 text-xl font-black tracking-wider text-slate-900 group">
                 <i class="fas fa-shopping-bag text-indigo-600 transition-transform group-hover:scale-110"></i>
-                DAERKNESS SHOP
+                <span class="hidden sm:inline">DAERKNESS SHOP</span>
+                <span class="inline sm:hidden">DAERKNESS</span>
             </a>
         </div>
 
-        <!-- Navigation Links Matrix -->
+        <!-- Navigation Links Matrix (Desktop) -->
         <nav class="hidden md:flex space-x-1">
             <a href="{{ url_for('home') }}"
                class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
@@ -34,7 +35,7 @@
         </nav>
 
         <!-- Functional Icon Configuration & Auth -->
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 sm:gap-4">
 
             <!-- Favorites Action Link -->
             <a href="{{ url_for('favorites') }}"
@@ -51,36 +52,41 @@
                title="Cart"
                class="relative p-2 rounded-lg transition-colors group {{ 'text-indigo-600 bg-indigo-50/60' if request.endpoint == 'cart' else 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' }}">
                 <i class="fas fa-shopping-cart text-lg"></i>
-               {% if cart_count > 0 %}
-    <span class="cart-badge" style="
-        position: absolute;
-        top: -8px;
-        right: -10px;
-        background-color: #38a169; /* Dynamic Green color matches your screenshot */
-        color: white;
-        font-size: 11px;
-        font-weight: bold;
-        border-radius: 50%;
-        padding: 2px 6px;
-        min-width: 12px;
-        text-align: center;
-        line-height: 12px;
-    ">
-        {{ cart_count }}
-    </span>
-    {% endif %}
+               {% if cart_count and cart_count > 0 %}
+                <span class="cart-badge absolute -top-1 -right-2 bg-emerald-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[16px] text-center border-2 border-white">
+                    {{ cart_count }}
+                </span>
+                {% endif %}
             </a>
 
             <!-- Border Separator -->
             <span class="h-6 w-px bg-slate-200 hidden sm:block" aria-hidden="true"></span>
 
             <!-- Authentication Entry Button -->
-            <div class="auth-nav">
+            <div class="auth-nav hidden sm:block">
                 <a href="{{ url_for('login') }}"
                    class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold rounded-lg text-white bg-slate-900 hover:bg-indigo-600 shadow-sm hover:shadow transition-all duration-200">
                     Login
                 </a>
             </div>
+
+            <!-- Mobile menu button -->
+            <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="md:hidden hidden bg-white border-b border-slate-200 absolute w-full shadow-lg" id="mobile-menu">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="{{ url_for('home') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ 'bg-indigo-50 text-indigo-700' if request.endpoint == 'home' else 'text-slate-700 hover:text-slate-900 hover:bg-slate-50' }}">Home</a>
+            <a href="{{ url_for('products') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ 'bg-indigo-50 text-indigo-700' if request.endpoint == 'products' else 'text-slate-700 hover:text-slate-900 hover:bg-slate-50' }}">Shop All</a>
+            <a href="{{ url_for('contact') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ 'bg-indigo-50 text-indigo-700' if request.endpoint == 'contact' else 'text-slate-700 hover:text-slate-900 hover:bg-slate-50' }}">Contact Us</a>
+            <a href="{{ url_for('about') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ 'bg-indigo-50 text-indigo-700' if request.endpoint == 'about' else 'text-slate-700 hover:text-slate-900 hover:bg-slate-50' }}">About Us</a>
+            <a href="{{ url_for('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 border-t border-slate-100 mt-2 pt-2">Login / Register</a>
         </div>
     </div>
 </header>

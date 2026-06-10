@@ -1,87 +1,100 @@
 {% extends "customer/layout.html" %}
 
 {% block content %}
-<div class="container product-detail-container">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
 
-    <!-- Back Button Component -->
-    <div class="back-navigation">
-        <a href="{{ url_for('home') }}">
-            <button class="btn-back">
+    <!-- Top Navigation -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <!-- Back Button Component -->
+        <a href="{{ url_for('home') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors bg-white border border-slate-200 px-4 py-2 rounded-lg shadow-sm w-fit hover:border-indigo-200 hover:shadow">
             <i class="fas fa-arrow-left"></i> Back to Products
-        </button>
         </a>
+
+        <!-- Breadcrumb navigation -->
+        <nav class="flex text-sm text-slate-500 font-medium whitespace-nowrap overflow-x-auto">
+            <a href="{{ url_for('home') }}" class="hover:text-slate-900 transition-colors">Home</a>
+            <span class="mx-2 text-slate-400">/</span>
+            <span class="capitalize hover:text-slate-900 transition-colors cursor-pointer">{{ item.category }}</span>
+            <span class="mx-2 text-slate-400">/</span>
+            <span class="text-slate-900 font-bold truncate max-w-[150px] sm:max-w-xs">{{ item.title }}</span>
+        </nav>
     </div>
 
-    <!-- Breadcrumb navigation -->
-    <nav class="breadcrumb">
-        <a href="{{ url_for('home') }}">Home</a> &gt;
-        <span class="breadcrumb-current">{{ item.category }}</span> &gt;
-        <strong>{{ item.title }}</strong>
-    </nav>
-
     <!-- Main Detail Row Split -->
-    <div class="product-detail-wrapper">
-        <div class="product-detail-media">
-            <div class="main-image-box">
-                <img src="{{ item.image }}" alt="{{ item.title }}" class="main-product-img">
+    <div class="flex flex-col lg:flex-row gap-10 xl:gap-16">
+        <!-- Product Image -->
+        <div class="w-full lg:w-1/2">
+            <div class="bg-white border border-slate-200 rounded-2xl p-8 sm:p-12 flex items-center justify-center min-h-[300px] sm:min-h-[450px] shadow-sm relative group overflow-hidden">
+                <img src="{{ item.image }}" alt="{{ item.title }}" class="max-w-full h-auto max-h-[400px] object-contain transform group-hover:scale-105 transition-transform duration-500 ease-out mix-blend-multiply">
             </div>
         </div>
 
-        <div class="product-detail-info">
-            <span class="detail-category">{{ item.category }}</span>
-            <h1 class="detail-title">{{ item.title }}</h1>
+        <!-- Product Info -->
+        <div class="w-full lg:w-1/2 flex flex-col">
+            <span class="text-xs font-bold uppercase tracking-widest text-indigo-600 mb-2">{{ item.category }}</span>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-4">{{ item.title }}</h1>
 
-            <div class="product-rating-row">
-                <div class="stars-container">
-                    <span class="star-icon">★</span>
-                    <span class="rating-value">{{ item.rating.rate }}</span>
+            <!-- Rating Row -->
+            <div class="flex items-center gap-4 mb-6">
+                <div class="flex items-center gap-1 bg-amber-100 px-3 py-1 rounded-full">
+                    <span class="text-amber-500 text-sm"><i class="fas fa-star"></i></span>
+                    <span class="text-amber-700 font-bold text-sm">{{ item.rating.rate }}</span>
                 </div>
-                <span class="review-count">({{ item.rating.count }} customer reviews)</span>
+                <span class="text-sm font-medium text-slate-500">({{ item.rating.count }} customer reviews)</span>
             </div>
 
-            <div class="detail-price-row">
-                <span class="detail-price">${{ "%.2f"|format(item.price) }}</span>
+            <!-- Price -->
+            <div class="mb-8">
+                <span class="text-3xl sm:text-4xl font-black text-slate-900">${{ "%.2f"|format(item.price) }}</span>
             </div>
 
-            <hr class="divider">
+            <div class="w-full h-px bg-slate-200 mb-8"></div>
 
-            <div class="detail-description">
-                <h3>Product Overview</h3>
-                <p>{{ item.description }}</p>
+            <!-- Description -->
+            <div class="prose prose-sm sm:prose-base text-slate-600 mb-10 max-w-none">
+                <h3 class="text-lg font-bold text-slate-900 mb-3">Product Overview</h3>
+                <p class="leading-relaxed">{{ item.description }}</p>
             </div>
 
-              <div class="detail-actions flex items-center">
-                   <form action="{{ url_for('add_to_cart', item_id=item.id) }}" method="POST">
-                        <button class="bg-blue-400 px-3 py-2 rounded-sm" type="submit">Add to Cart</button>
-                    </form>
-                    <button type="button" class="btn-wishlist" title="Add to Wishlist">
-                        <i class="far fa-heart"></i>
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row items-center gap-4 mt-auto">
+                <form action="{{ url_for('add_to_cart', item_id=item.id) }}" method="POST" class="w-full sm:w-auto flex-1">
+                    <button type="submit" class="w-full flex items-center justify-center gap-3 bg-slate-900 hover:bg-indigo-600 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        <i class="fas fa-shopping-cart"></i> Add to Cart
                     </button>
-                </div>
+                </form>
+                <button type="button" class="w-full sm:w-auto flex-shrink-0 flex items-center justify-center bg-white border border-slate-200 hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600 text-slate-600 py-4 px-4 sm:w-14 sm:h-14 sm:py-0 rounded-xl transition-all duration-300 shadow-sm" title="Add to Wishlist">
+                    <i class="far fa-heart text-xl mr-2 sm:mr-0"></i> <span class="sm:hidden font-semibold">Add to Wishlist</span>
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Related Products Component Section -->
     {% if related_products %}
-    <section class="related-products-section">
-        <hr class="divider section-divider">
-        <h2 class="related-heading">You May Also Like</h2>
+    <section class="pt-12 mt-12 border-t border-slate-200">
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900 mb-8">You May Also Like</h2>
 
-        <div class="related-grid">
+        <!-- Product Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
             {% for rel in related_products %}
-            <div class="related-card">
-                <div class="related-img-container">
-                    <a href="{{ url_for('view_product', item_id=rel.id) }}">
-                        <img src="{{ rel.image }}" alt="{{ rel.title }}">
+            <div class="group flex flex-col bg-white rounded-xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-slate-300 transform hover:-translate-y-1 transition-all duration-300">
+
+                <div class="relative bg-slate-100 aspect-square overflow-hidden w-full p-4">
+                    <a href="{{ url_for('view_product', item_id=rel.id) }}" class="block w-full h-full">
+                        <img src="{{ rel.image }}" alt="{{ rel.title }}" class="w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-500 ease-in-out mix-blend-multiply">
                     </a>
                 </div>
-                <div class="related-meta">
-                    <h4 class="related-title">
+
+                <div class="p-4 flex-grow flex flex-col justify-between space-y-2">
+                    <h4 class="text-[11px] sm:text-sm font-semibold text-slate-800 line-clamp-2 group-hover:text-indigo-600 transition-colors leading-snug">
                         <a href="{{ url_for('view_product', item_id=rel.id) }}">{{ rel.title }}</a>
                     </h4>
-                    <div class="related-footer">
-                        <span class="related-price">${{ "%.2f"|format(rel.price) }}</span>
-                        <span class="related-rating">★ {{ rel.rating.rate }}</span>
+                    <div class="flex items-center justify-between pt-2">
+                        <span class="text-sm sm:text-base font-bold text-slate-900">${{ "%.2f"|format(rel.price) }}</span>
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">
+                            ★ {{ rel.rating.rate }}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -91,70 +104,4 @@
     {% endif %}
 
 </div>
-
-<!-- CSS Architecture Styles -->
-<style>
-    /* Main Layout Utilities */
-    .product-detail-container { padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 1200px; margin: 0 auto; }
-    .back-navigation { margin-bottom: 20px; }
-    .btn-back { display: inline-flex; align-items: center; gap: 8px; background: #f7fafc; color: #4a5568; border: 1px solid #e2e8f0; padding: 10px 18px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; text-decoration: none; transition: all 0.2s ease; }
-    .btn-back:hover { background: #edf2f7; color: #1a202c; border-color: #cbd5e0; }
-
-    .breadcrumb { margin-bottom: 25px; color: #777; font-size: 14px; }
-    .breadcrumb a { color: #111; text-decoration: none; font-weight: 500; }
-    .breadcrumb-current { text-transform: capitalize; }
-
-    .product-detail-wrapper { display: flex; gap: 60px; flex-wrap: wrap; margin-top: 20px; }
-    .product-detail-media, .product-detail-info { flex: 1; min-width: 320px; }
-
-    .main-image-box { position: relative; border: 1px solid #eaeaea; border-radius: 12px; padding: 30px; text-align: center; background: #fff; display: flex; align-items: center; justify-content: center; min-height: 450px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-    .main-product-img { max-width: 100%; height: auto; max-height: 400px; object-fit: contain; }
-
-    .detail-category { text-transform: uppercase; color: #2b6cb0; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; display: inline-block; margin-bottom: 6px; }
-    .detail-title { font-size: 28px; font-weight: 700; line-height: 1.3; margin: 0 0 12px 0; color: #1a202c; }
-
-    .product-rating-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-    .stars-container { background: #fef3c7; color: #d97706; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; font-weight: 600; font-size: 14px; }
-    .star-icon { color: #f59e0b; font-size: 16px; }
-    .review-count { color: #718096; font-size: 14px; }
-
-    .detail-price-row { margin-bottom: 25px; }
-    .detail-price { font-size: 28px; font-weight: 700; color: #111; }
-    .divider { border: 0; border-top: 1px solid #edf2f7; margin: 25px 0; }
-    .section-divider { margin: 60px 0 30px 0; }
-
-    .detail-description h3 { font-size: 16px; color: #2d3748; margin-bottom: 10px; font-weight: 600; }
-    .detail-description p { color: #4a5568; line-height: 1.7; font-size: 15px; }
-
-    .quantity-selector { margin: 25px 0; display: flex; align-items: center; gap: 15px; }
-    .qty-input-group input { width: 70px; padding: 10px; text-align: center; border: 1px solid #cbd5e0; border-radius: 6px; font-size: 15px; font-weight: 600; }
-
-    .detail-actions { display: flex; gap: 15px; margin-top: 30px; }
-    .btn-add-cart { flex: 1; background: #1a202c; color: #fff; border: none; padding: 16px; font-size: 16px; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .btn-wishlist { background: #fff; border: 1px solid #e2e8f0; width: 56px; height: 56px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #4a5568; }
-
-    /* Related Products Layout */
-    .related-heading { font-size: 22px; font-weight: 700; color: #1a202c; margin-bottom: 20px; }
-    .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
-    .related-card { background: #fff; border: 1px solid #edf2f7; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; }
-    .related-card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-
-    .related-img-container { background: #fff; padding: 15px; height: 180px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #f7fafc; }
-    .related-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
-    .related-meta { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; justify-content: space-between; }
-    .related-title { font-size: 14px; font-weight: 600; margin: 0 0 10px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .related-title a { color: #2d3748; text-decoration: none; }
-    .related-title a:hover { color: #2b6cb0; }
-
-    .related-footer { display: flex; justify-content: space-between; align-items: center; }
-    .related-price { font-weight: 700; color: #1a202c; font-size: 15px; }
-    .related-rating { font-size: 12px; color: #d97706; font-weight: 600; background: #fef3c7; padding: 2px 6px; border-radius: 4px; }
-
-    @media (max-width: 768px) {
-        .product-detail-wrapper { gap: 30px; }
-        .main-image-box { min-height: 320px; }
-        .related-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-    }
-</style>
 {% endblock %}
