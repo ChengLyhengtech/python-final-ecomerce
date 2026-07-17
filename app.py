@@ -1,9 +1,10 @@
 import json
 import requests
-from flask import Flask, render_template, request, redirect, url_for, make_response
+from flask import Flask, render_template, request, redirect, url_for, make_response, flash
 from items import items
 
 app = Flask(__name__)
+app.secret_key = 'super_secret_heng_key'
 # --- TELEGRAM BOT CONFIGURATION ---
 BOT_TOKEN = "8712622989:AAGcjjd6Gb7r9q7yeoRkPFvMiZaDOwHZRJ4"
 TELEGRAM_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -17,17 +18,19 @@ def home():
 def products():
     return render_template('customer/products.html',item=items)
 
+@app.route('/')
+
 @app.route('/contact')
 def contact():
     return render_template('customer/contact.html')
 
 @app.route('/login')
 def login():
-    return render_template('share/login.html')
+    return render_template('customer/share/login.html')
 
 @app.route('/register')
 def register():
-    return render_template('share/register.html')
+    return render_template('customer/share/register.html')
 
 @app.route('/favorites')
 def favorites():
@@ -274,6 +277,223 @@ def place_order():
     response.delete_cookie('cart')
     return response
 
+
+# admin route
+
+# Mock Data for Categories & Users
+mock_categories = ["men's clothing", "jewelery", "electronics", "women's clothing"]
+mock_users = [
+    {"id": 1, "name": "John Doe", "email": "john@example.com", "role": "Admin"},
+    {"id": 2, "name": "Jane Smith", "email": "jane@example.com", "role": "Editor"},
+]
+
+@app.route('/admin')
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    stats = {
+        "total_products": len(items),
+        "total_categories": len(mock_categories),
+        "total_users": len(mock_users)
+    }
+    return render_template('admin/dashboard.html', stats=stats)
+
+@app.route('/admin/products')
+def admin_products():
+    return render_template('admin/products.html', products=items)
+
+@app.route('/admin/categories')
+def admin_categories():
+    return render_template('admin/categories.html', categories=mock_categories)
+
+@app.route('/admin/users')
+def admin_users():
+    return render_template('admin/users.html', users=mock_users)
+
+@app.route('/admin/products/add', methods=['GET', 'POST'])
+def add_product():
+    global items
+    if request.method == 'POST':
+        title = request.form.get('title')
+        price_val = request.form.get('price')
+        category = request.form.get('category')
+        image = request.form.get('image', '')
+        
+        if title and price_val and category:
+            try:
+                price = float(price_val)
+            except ValueError:
+                flash('Invalid price value.', 'danger')
+                return redirect(url_for('admin_products'))
+            
+            new_id = max([x['id'] for x in items]) + 1 if items else 1
+            new_item = {
+                "id": new_id,
+                "title": title,
+                "price": price,
+                "description": "",
+                "category": category,
+                "image": image or "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
+                "rating": {
+                    "rate": 0.0,
+                    "count": 0
+                }
+            }
+            items.append(new_item)
+            flash(f'Product "{title}" added successfully!', 'success')
+            return redirect(url_for('admin_products'))
+        else:
+            flash('All fields are required.', 'danger')
+            return redirect(url_for('admin_products'))
+    return render_template('admin/add_product.html')
+
+@app.route('/admin/products/edit/<int:product_id>', methods=['GET', 'POST'])
+def edit_product(product_id):
+    global items
+    item = next((x for x in items if x['id'] == product_id), None)
+    if not item:
+        flash('Product not found.', 'danger')
+        return redirect(url_for('admin_products'))
+        
+    if request.method == 'POST':
+        title = request.form.get('title')
+        price_val = request.form.get('price')
+        category = request.form.get('category')
+        image = request.form.get('image', '')
+        
+        if title and price_val and category:
+            try:
+                price = float(price_val)
+            except ValueError:
+                flash('Invalid price value.', 'danger')
+                return redirect(url_for('edit_product', product_id=product_id))
+            
+            item['title'] = title
+            item['price'] = price
+            item['category'] = category
+            if image:
+                item['image'] = image
+            flash(f'Product "{title}" updated successfully!', 'success')
+            return redirect(url_for('admin_products'))
+        else:
+            flash('All fields are required.', 'danger')
+            return redirect(url_for('edit_product', product_id=product_id))
+            
+    return render_template('admin/edit_product.html', item=item)
+
+@app.route('/admin/products/delete/<int:product_id>', methods=['POST'])
+def delete_product(product_id):
+    global items
+    item = next((x for x in items if x['id'] == product_id), None)
+    if item:
+        items.remove(item)
+        flash(f'Product "{item["title"]}" deleted successfully!', 'success')
+    else:
+        flash('Product not found.', 'danger')
+    return redirect(url_for('admin_products'))
+
+@app.route('/admin/categories/add', methods=['GET', 'POST'])
+def add_category():
+    global mock_categories
+    if request.method == 'POST':
+        category_name = request.form.get('category_name')
+        if category_name:
+            mock_categories.append(category_name)
+            flash(f'Category "{category_name}" added successfully!', 'success')
+            return redirect(url_for('admin_categories'))
+        else:
+            flash('Category name is required.', 'danger')
+            return redirect(url_for('admin_categories'))
+    return render_template('admin/add_category.html')
+
+@app.route('/admin/categories/edit/<int:category_id>', methods=['GET', 'POST'])
+def edit_category(category_id):
+    global mock_categories
+    if category_id - 1 >= len(mock_categories) or category_id - 1 < 0:
+        flash('Category not found.', 'danger')
+        return redirect(url_for('admin_categories'))
+        
+    if request.method == 'POST':
+        category_name = request.form.get('category_name')
+        if category_name:
+            old_name = mock_categories[category_id - 1]
+            mock_categories[category_id - 1] = category_name
+            flash(f'Category changed from "{old_name}" to "{category_name}"!', 'success')
+            return redirect(url_for('admin_categories'))
+        else:
+            flash('Category name is required.', 'danger')
+            return redirect(url_for('edit_category', category_id=category_id))
+            
+    category_name = mock_categories[category_id - 1]
+    return render_template('admin/edit_category.html', category=category_name)
+
+@app.route('/admin/categories/delete/<int:category_id>', methods=['POST'])
+def delete_category(category_id):
+    global mock_categories
+    if 0 < category_id <= len(mock_categories):
+        deleted_name = mock_categories.pop(category_id - 1)
+        flash(f'Category "{deleted_name}" deleted successfully!', 'success')
+    else:
+        flash('Category not found.', 'danger')
+    return redirect(url_for('admin_categories'))
+
+# --- USERS CRUD ---
+@app.route('/admin/users/add', methods=['GET', 'POST'])
+def add_user():
+    global mock_users
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        role = request.form.get('role')
+        if name and email and role:
+            new_id = max([x['id'] for x in mock_users]) + 1 if mock_users else 1
+            new_user = {
+                "id": new_id,
+                "name": name,
+                "email": email,
+                "role": role
+            }
+            mock_users.append(new_user)
+            flash(f'User "{name}" added successfully!', 'success')
+            return redirect(url_for('admin_users'))
+        else:
+            flash('All fields are required.', 'danger')
+            return redirect(url_for('admin_users'))
+    return render_template('admin/add_user.html')
+
+@app.route('/admin/users/edit/<int:user_id>', methods=['GET', 'POST'])
+def edit_user(user_id):
+    global mock_users
+    user = next((x for x in mock_users if x['id'] == user_id), None)
+    if not user:
+        flash('User not found.', 'danger')
+        return redirect(url_for('admin_users'))
+        
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        role = request.form.get('role')
+        if name and email and role:
+            user['name'] = name
+            user['email'] = email
+            user['role'] = role
+            flash(f'User "{name}" updated successfully!', 'success')
+            return redirect(url_for('admin_users'))
+        else:
+            flash('All fields are required.', 'danger')
+            return redirect(url_for('edit_user', user_id=user_id))
+            
+    return render_template('admin/edit_user.html', user=user)
+
+@app.route('/admin/users/delete/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    global mock_users
+    user = next((x for x in mock_users if x['id'] == user_id), None)
+    if user:
+        mock_users.remove(user)
+        flash(f'User "{user["name"]}" deleted successfully!', 'success')
+    else:
+        flash('User not found.', 'danger')
+    return redirect(url_for('admin_users'))
 
 # --- GLOBAL CONTEXT PROCESSOR FOR CART COUNT ---
 @app.context_processor

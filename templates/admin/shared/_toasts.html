@@ -1,0 +1,30 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+      {% for category, message in messages %}
+        {% set bg_class = 'bg-success text-white' if category == 'success' else ('bg-danger text-white' if category == 'danger' else 'bg-primary text-white') %}
+        {% set icon_class = 'bi-check-circle-fill' if category == 'success' else ('bi-exclamation-triangle-fill' if category == 'danger' else 'bi-info-circle-fill') %}
+        <div class="toast align-items-center {{ bg_class }} border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
+          <div class="d-flex p-2">
+            <div class="toast-body d-flex align-items-center gap-2">
+              <i class="bi {{ icon_class }} fs-5"></i>
+              <span>{{ message }}</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white m-auto me-2" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+        var toastList = toastElList.map(function(toastEl) {
+          return new bootstrap.Toast(toastEl);
+        });
+        toastList.forEach(function(toast) {
+          toast.show();
+        });
+      });
+    </script>
+  {% endif %}
+{% endwith %}

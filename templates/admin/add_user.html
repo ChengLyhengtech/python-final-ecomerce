@@ -1,0 +1,45 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Add User{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Add New User</h1>
+    <a href="{{ url_for('admin_users') }}" class="btn btn-modern btn-modern-light"><i class="bi bi-arrow-left"></i> Back to Users</a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card card-modern p-4">
+            <form action="{{ url_for('add_user') }}" method="POST">
+                <div class="mb-4">
+                    <label for="userName" class="form-label fw-semibold text-muted">Full Name</label>
+                    <input type="text" class="form-control form-control-lg bg-light" id="userName"
+                        name="name" placeholder="e.g. Alice Smith" required
+                        style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+                </div>
+                <div class="mb-4">
+                    <label for="userEmail" class="form-label fw-semibold text-muted">Email Address</label>
+                    <input type="email" class="form-control form-control-lg bg-light" id="userEmail"
+                        name="email" placeholder="e.g. alice@example.com" required
+                        style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+                </div>
+                <div class="mb-4">
+                    <label for="userRole" class="form-label fw-semibold text-muted">Role</label>
+                    <select class="form-select form-select-lg bg-light" id="userRole" name="role" required
+                        style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+                        <option value="Admin">Admin</option>
+                        <option value="Editor">Editor</option>
+                        <option value="User" selected>User</option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-5">
+                    <a href="{{ url_for('admin_users') }}" class="btn btn-modern btn-modern-light">Cancel</a>
+                    <button type="submit" class="btn btn-modern btn-modern-primary">Add User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% block content_scripts %}{% endblock %}
+{% endblock %}

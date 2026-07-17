@@ -1,0 +1,54 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Products Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Products</h1>
+    <a href="/admin/products/add" class="btn btn-modern btn-modern-primary"><i class="bi bi-plus-lg"></i> Add New Product</a>
+</div>
+
+<div class="table-modern">
+    <table class="table table-hover align-middle mb-0">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Rating</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in products %}
+            <tr>
+                <td>
+                    <div class="bg-white border rounded p-1" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                        <img src="{{ item.image }}" alt="{{ item.title }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    </div>
+                </td>
+                <td>
+                    <div class="text-truncate fw-medium" style="max-width: 250px;">{{ item.title }}</div>
+                </td>
+                <td><span class="badge badge-soft-primary px-2 py-1 text-capitalize">{{ item.category }}</span></td>
+                <td class="fw-semibold">${{ item.price }}</td>
+                <td>
+                    <div class="d-flex align-items-center gap-1">
+                        <i class="bi bi-star-fill text-warning" style="font-size: 0.875rem;"></i>
+                        <span class="fw-medium">{{ item.rating.rate }}</span>
+                        <span class="text-muted fs-7">({{ item.rating.count }})</span>
+                    </div>
+                </td>
+                <td class="text-end">
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="/admin/products/edit/{{ item.id }}" class="btn btn-sm btn-modern btn-modern-info"><i class="bi bi-pencil"></i></a>
+                        <button type="button" class="btn btn-sm btn-modern btn-modern-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-url="/admin/products/delete/{{ item.id }}" data-name="{{ item.title | e }}" data-type="product"><i class="bi bi-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

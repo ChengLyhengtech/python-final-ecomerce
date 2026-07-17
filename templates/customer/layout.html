@@ -8,11 +8,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../.././static/css/style.css">
+    <link rel="stylesheet" href="../../static/customer/css/style.css">
 </head>
 <body class="flex flex-col min-h-full text-slate-800 antialiased">
 
-{% include 'share/header.html' %}
+{% include 'customer/share/header.html' %}
 
     <!-- Pushes footer down on empty or short pages -->
     <main class="flex-grow">
@@ -20,7 +20,7 @@
         {% endblock %}
     </main>
 
-{% include 'share/footer.html' %}
+{% include 'customer/share/footer.html' %}
 
 </body>
 </html>
