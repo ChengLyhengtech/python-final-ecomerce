@@ -11,7 +11,17 @@
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
         <div class="card card-modern p-4">
-            <form action="{{ url_for('add_user') }}" method="POST">
+            <form action="{{ url_for('add_user') }}" method="POST" enctype="multipart/form-data">
+                <div class="mb-4 text-center">
+                    <div class="position-relative d-inline-block">
+                        <img id="profilePreview" src="/static/admin/img/no-profile.png" alt="Profile Preview" class="rounded-circle border" style="width: 120px; height: 120px; object-fit: cover;">
+                        <label for="profileUpload" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px; cursor: pointer; border: 2px solid white;">
+                            <i class="bi bi-camera-fill" style="font-size: 0.875rem;"></i>
+                        </label>
+                        <input type="file" id="profileUpload" name="profile" accept="image/*" class="d-none">
+                    </div>
+                    <div class="text-muted small mt-2">Upload Profile Photo</div>
+                </div>
                 <div class="mb-4">
                     <label for="userName" class="form-label fw-semibold text-muted">Full Name</label>
                     <input type="text" class="form-control form-control-lg bg-light" id="userName"
@@ -41,5 +51,24 @@
         </div>
     </div>
 </div>
-{% block content_scripts %}{% endblock %}
+{% block content_scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var profileUpload = document.getElementById('profileUpload');
+        var profilePreview = document.getElementById('profilePreview');
+        if (profileUpload && profilePreview) {
+            profileUpload.addEventListener('change', function(e) {
+                var file = e.target.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(event) {
+                        profilePreview.setAttribute('src', event.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
 {% endblock %}

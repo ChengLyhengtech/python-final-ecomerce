@@ -1,5 +1,7 @@
 import json
 import requests
+import os
+from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request, redirect, url_for, make_response, flash
 from items import items
 
@@ -283,8 +285,8 @@ def place_order():
 # Mock Data for Categories & Users
 mock_categories = ["men's clothing", "jewelery", "electronics", "women's clothing"]
 mock_users = [
-    {"id": 1, "name": "John Doe", "email": "john@example.com", "role": "Admin"},
-    {"id": 2, "name": "Jane Smith", "email": "jane@example.com", "role": "Editor"},
+    {"id": 1, "name": "John Doe", "email": "john@example.com", "role": "Admin", "profile": "/static/admin/img/no-profile.png"},
+    {"id": 2, "name": "Jane Smith", "email": "jane@example.com", "role": "Editor", "profile": "/static/admin/img/no-profile.png"},
 ]
 
 @app.route('/admin')
@@ -445,12 +447,23 @@ def add_user():
         email = request.form.get('email')
         role = request.form.get('role')
         if name and email and role:
+            profile_path = '/static/admin/img/no-profile.png'
+            profile_file = request.files.get('profile')
+            if profile_file and profile_file.filename != '':
+                filename = secure_filename(profile_file.filename)
+                upload_folder = os.path.join(app.root_path, 'static', 'admin', 'uploads')
+                os.makedirs(upload_folder, exist_ok=True)
+                file_path = os.path.join(upload_folder, filename)
+                profile_file.save(file_path)
+                profile_path = f'/static/admin/uploads/{filename}'
+                
             new_id = max([x['id'] for x in mock_users]) + 1 if mock_users else 1
             new_user = {
                 "id": new_id,
                 "name": name,
                 "email": email,
-                "role": role
+                "role": role,
+                "profile": profile_path
             }
             mock_users.append(new_user)
             flash(f'User "{name}" added successfully!', 'success')
@@ -473,6 +486,15 @@ def edit_user(user_id):
         email = request.form.get('email')
         role = request.form.get('role')
         if name and email and role:
+            profile_file = request.files.get('profile')
+            if profile_file and profile_file.filename != '':
+                filename = secure_filename(profile_file.filename)
+                upload_folder = os.path.join(app.root_path, 'static', 'admin', 'uploads')
+                os.makedirs(upload_folder, exist_ok=True)
+                file_path = os.path.join(upload_folder, filename)
+                profile_file.save(file_path)
+                user['profile'] = f'/static/admin/uploads/{filename}'
+                
             user['name'] = name
             user['email'] = email
             user['role'] = role
