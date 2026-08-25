@@ -28,13 +28,13 @@
 
                         <td>
                             <div class="quantity-control" style="display: flex; align-items: center; gap: 5px;">
-                                <form action="{{ url_for('decrease_cart', item_id=item.product.id) }}" method="POST" style="margin: 0;">
+                                <form action="{{ url_for('customer.decrease_cart', item_id=item.product.id) }}" method="POST" style="margin: 0;">
                                     <button type="submit" class="qty-btn" style="padding: 2px 8px; cursor: pointer;">-</button>
                                 </form>
 
                                 <input type="number" value="{{ item.quantity }}" min="1" readonly style="width: 40px; text-align: center; margin: 0;">
 
-                                <form action="{{ url_for('increase_cart', item_id=item.product.id) }}" method="POST" style="margin: 0;">
+                                <form action="{{ url_for('customer.increase_cart', item_id=item.product.id) }}" method="POST" style="margin: 0;">
                                     <button type="submit" class="qty-btn" style="padding: 2px 8px; cursor: pointer;">+</button>
                                 </form>
                             </div>
@@ -43,7 +43,7 @@
                         <td>${{ "%.2f"|format(item.item_total) }}</td>
 
                         <td>
-                            <form action="{{ url_for('remove_from_cart', item_id=item.product.id) }}" method="POST" style="margin: 0;">
+                            <form action="{{ url_for('customer.remove_from_cart', item_id=item.product.id) }}" method="POST" style="margin: 0;">
                                 <button onclick="return confirm('Are you sure you want to completely delete this item? This cannot be undone.');" type="submit" class="remove-btn" style="background: none; border: none; color: #dc3545; cursor: pointer;">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -71,21 +71,21 @@
                 <span>${{ "%.2f"|format(total_price) }}</span>
             </div>
 
-            <a href="{{ url_for('checkout') }}" class="checkout-btn" style="text-align: center; text-decoration: none; display: block;">Proceed to Checkout</a>
+            <a href="{{ url_for('customer.checkout') }}" class="checkout-btn" style="text-align: center; text-decoration: none; display: block;">Proceed to Checkout</a>
 
-            <a href="{{ url_for('clear_cart') }}"
+            <a href="{{ url_for('customer.clear_cart') }}"
                class="continue-shopping"
                style="color: #dc3545; display: block; margin-bottom: 10px; text-align: center;"
                onclick="return confirm('Are you sure you want to completely empty your shopping cart? This cannot be undone.');">
                Empty Cart
             </a>
-            <a href="/" class="continue-shopping">Continue Shopping</a>
+            <a href="{{ url_for('customer.home') }}" class="continue-shopping">Continue Shopping</a>
         </div>
 
         {% else %}
         <div class="empty-cart-message" style="text-align: center; padding: 40px 0;">
             <p>Your shopping cart is empty.</p>
-            <a href="/" class="checkout-btn" style="display: inline-block; text-decoration: none;">Shop Our Products</a>
+            <a href="{{ url_for('customer.home') }}" class="checkout-btn" style="display: inline-block; text-decoration: none;">Shop Our Products</a>
         </div>
         {% endif %}
     </div>

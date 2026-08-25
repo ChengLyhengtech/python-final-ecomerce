@@ -3,64 +3,103 @@
 {% block title %}Add User{% endblock %}
 
 {% block content %}
-<div class="page-header">
+<div class="page-header mb-4">
     <h1>Add New User</h1>
-    <a href="{{ url_for('admin_users') }}" class="btn btn-modern btn-modern-light"><i class="bi bi-arrow-left"></i> Back to Users</a>
+    <a href="{{ url_for('admin_user.admin_users') }}" class="btn btn-modern btn-modern-light">
+        <i class="bi bi-arrow-left"></i> Back to Users
+    </a>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
-        <div class="card card-modern p-4">
-            <form action="{{ url_for('add_user') }}" method="POST" enctype="multipart/form-data">
+        <div class="card card-modern p-4 shadow-sm">
+            <form action="{{ url_for('admin_user.add_user') }}" method="POST" enctype="multipart/form-data">
+
+                <!-- Profile Image Upload Section -->
                 <div class="mb-4 text-center">
-                    <div class="position-relative d-inline-block">
-                        <img id="profilePreview" src="/static/admin/img/no-profile.png" alt="Profile Preview" class="rounded-circle border" style="width: 120px; height: 120px; object-fit: cover;">
-                        <label for="profileUpload" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px; cursor: pointer; border: 2px solid white;">
+                    <label for="profileUpload" class="position-relative d-inline-block" style="cursor: pointer;">
+                        <img id="profilePreview"
+                             src="{{ url_for('static', filename='admin/img/no-profile.png') }}"
+                             alt="Profile Preview"
+                             class="rounded-circle border"
+                             style="width: 120px; height: 120px; object-fit: cover;">
+
+                        <span class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                               style="width: 32px; height: 32px; border: 2px solid white;">
                             <i class="bi bi-camera-fill" style="font-size: 0.875rem;"></i>
-                        </label>
+                        </span>
+
                         <input type="file" id="profileUpload" name="profile" accept="image/*" class="d-none">
-                    </div>
+                    </label>
                     <div class="text-muted small mt-2">Upload Profile Photo</div>
                 </div>
+
+                <!-- Username Field -->
                 <div class="mb-4">
-                    <label for="userName" class="form-label fw-semibold text-muted">Full Name</label>
+                    <label for="userName" class="form-label fw-semibold text-muted">Username <span class="text-danger">*</span></label>
                     <input type="text" class="form-control form-control-lg bg-light" id="userName"
-                        name="name" placeholder="e.g. Alice Smith" required
+                        name="username" placeholder="e.g. johndoe" required
                         style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
                 </div>
+
+                <!-- Email Field -->
                 <div class="mb-4">
-                    <label for="userEmail" class="form-label fw-semibold text-muted">Email Address</label>
+                    <label for="userEmail" class="form-label fw-semibold text-muted">Email Address <span class="text-danger">*</span></label>
                     <input type="email" class="form-control form-control-lg bg-light" id="userEmail"
-                        name="email" placeholder="e.g. alice@example.com" required
+                        name="email" placeholder="e.g. john@example.com" required
                         style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
                 </div>
+
+                <!-- Password Field -->
                 <div class="mb-4">
-                    <label for="userRole" class="form-label fw-semibold text-muted">Role</label>
+                    <label for="userPassword" class="form-label fw-semibold text-muted">Password <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control form-control-lg bg-light" id="userPassword"
+                        name="password" placeholder="Create a strong password" required minlength="6"
+                        style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+                    <div class="text-muted small mt-1">Minimum 6 characters. Will be securely hashed.</div>
+                </div>
+
+                <!-- Phone Number Field -->
+                <div class="mb-4">
+                    <label for="userPhone" class="form-label fw-semibold text-muted">Phone Number (Optional)</label>
+                    <input type="text" class="form-control form-control-lg bg-light" id="userPhone"
+                        name="phone_number" placeholder="e.g. +855 12 345 678"
+                        style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+                </div>
+
+                <!-- Role Dropdown -->
+                <div class="mb-4">
+                    <label for="userRole" class="form-label fw-semibold text-muted">Role <span class="text-danger">*</span></label>
                     <select class="form-select form-select-lg bg-light" id="userRole" name="role" required
                         style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
-                        <option value="Admin">Admin</option>
-                        <option value="Editor">Editor</option>
-                        <option value="User" selected>User</option>
+                        <option value="admin">Admin</option>
+                        <option value="staff">Staff</option>
+                        <option value="editor">Editor</option>
+                        <option value="user" selected>User</option>
                     </select>
                 </div>
+
+                <!-- Action Buttons -->
                 <div class="d-flex justify-content-end gap-2 mt-5">
-                    <a href="{{ url_for('admin_users') }}" class="btn btn-modern btn-modern-light">Cancel</a>
+                    <a href="{{ url_for('admin_user.admin_users') }}" class="btn btn-modern btn-modern-light">Cancel</a>
                     <button type="submit" class="btn btn-modern btn-modern-primary">Add User</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
+
 {% block content_scripts %}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        var profileUpload = document.getElementById('profileUpload');
-        var profilePreview = document.getElementById('profilePreview');
+        const profileUpload = document.getElementById('profileUpload');
+        const profilePreview = document.getElementById('profilePreview');
         if (profileUpload && profilePreview) {
             profileUpload.addEventListener('change', function(e) {
-                var file = e.target.files[0];
+                const file = e.target.files && e.target.files[0];
                 if (file) {
-                    var reader = new FileReader();
+                    const reader = new FileReader();
                     reader.onload = function(event) {
                         profilePreview.setAttribute('src', event.target.result);
                     };
@@ -70,5 +109,4 @@
         }
     });
 </script>
-{% endblock %}
 {% endblock %}

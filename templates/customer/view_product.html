@@ -6,13 +6,13 @@
     <!-- Top Navigation -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <!-- Back Button Component -->
-        <a href="{{ url_for('home') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors bg-white border border-slate-200 px-4 py-2 rounded-lg shadow-sm w-fit hover:border-indigo-200 hover:shadow">
+        <a href="{{ url_for('customer.products') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors bg-white border border-slate-200 px-4 py-2 rounded-lg shadow-sm w-fit hover:border-indigo-200 hover:shadow">
             <i class="fas fa-arrow-left"></i> Back to Products
         </a>
 
         <!-- Breadcrumb navigation -->
         <nav class="flex text-sm text-slate-500 font-medium whitespace-nowrap overflow-x-auto">
-            <a href="{{ url_for('home') }}" class="hover:text-slate-900 transition-colors">Home</a>
+            <a href="{{ url_for('customer.home') }}" class="hover:text-slate-900 transition-colors">Home</a>
             <span class="mx-2 text-slate-400">/</span>
             <span class="capitalize hover:text-slate-900 transition-colors cursor-pointer">{{ item.category }}</span>
             <span class="mx-2 text-slate-400">/</span>
@@ -58,7 +58,7 @@
 
             <!-- Actions -->
             <div class="flex flex-col sm:flex-row items-center gap-4 mt-auto">
-                <form action="{{ url_for('add_to_cart', item_id=item.id) }}" method="POST" class="w-full sm:w-auto flex-1">
+                <form action="{{ url_for('customer.add_to_cart', item_id=item.id) }}" method="POST" class="w-full sm:w-auto flex-1">
                     <button type="submit" class="w-full flex items-center justify-center gap-3 bg-slate-900 hover:bg-indigo-600 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                         <i class="fas fa-shopping-cart"></i> Add to Cart
                     </button>
@@ -81,14 +81,14 @@
             <div class="group flex flex-col bg-white rounded-xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-slate-300 transform hover:-translate-y-1 transition-all duration-300">
 
                 <div class="relative bg-slate-100 aspect-square overflow-hidden w-full p-4">
-                    <a href="{{ url_for('view_product', item_id=rel.id) }}" class="block w-full h-full">
+                    <a href="{{ url_for('customer.view_product', item_id=rel.id) }}" class="block w-full h-full">
                         <img src="{{ rel.image }}" alt="{{ rel.title }}" class="w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-500 ease-in-out mix-blend-multiply">
                     </a>
                 </div>
 
                 <div class="p-4 flex-grow flex flex-col justify-between space-y-2">
                     <h4 class="text-[11px] sm:text-sm font-semibold text-slate-800 line-clamp-2 group-hover:text-indigo-600 transition-colors leading-snug">
-                        <a href="{{ url_for('view_product', item_id=rel.id) }}">{{ rel.title }}</a>
+                        <a href="{{ url_for('customer.view_product', item_id=rel.id) }}">{{ rel.title }}</a>
                     </h4>
                     <div class="flex items-center justify-between pt-2">
                         <span class="text-sm sm:text-base font-bold text-slate-900">${{ "%.2f"|format(rel.price) }}</span>

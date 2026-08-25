@@ -16,6 +16,33 @@
 
     <!-- Pushes footer down on empty or short pages -->
     <main class="flex-grow">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+                    {% for category, message in messages %}
+                        <div class="flex items-center p-4 mb-4 text-sm rounded-lg shadow-sm
+                            {% if category == 'success' %}
+                                bg-emerald-50 text-emerald-800 border border-emerald-200
+                            {% elif category == 'danger' or category == 'error' %}
+                                bg-rose-50 text-rose-800 border border-rose-200
+                            {% elif category == 'warning' %}
+                                bg-amber-50 text-amber-800 border border-amber-200
+                            {% else %}
+                                bg-indigo-50 text-indigo-800 border border-indigo-200
+                            {% endif %}" role="alert">
+                            <i class="fas {% if category == 'success' %}fa-check-circle text-emerald-500{% elif category == 'danger' or category == 'error' %}fa-exclamation-circle text-rose-500{% elif category == 'warning' %}fa-exclamation-triangle text-amber-500{% else %}fa-info-circle text-indigo-500{% endif %} mr-3 text-lg"></i>
+                            <div class="font-medium">{{ message }}</div>
+                            <button type="button" onclick="this.parentElement.remove()" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex h-8 w-8 hover:bg-black/5 text-current">
+                                <span class="sr-only">Close</span>
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         {% block content %}
         {% endblock %}
     </main>

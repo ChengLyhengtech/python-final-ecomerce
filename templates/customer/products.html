@@ -72,7 +72,7 @@
 
                 <!-- Product Image Window -->
                 <div class="relative bg-slate-100 aspect-square overflow-hidden w-full p-4">
-                    <a href="{{ url_for('view_product', item_id=itm.id) }}" class="block w-full h-full">
+                    <a href="{{ url_for('customer.view_product', item_id=itm.id) }}" class="block w-full h-full">
                         <img src="{{ itm.image }}" alt="{{ itm.title }}" class="w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-500 ease-in-out mix-blend-multiply">
                     </a>
                 </div>
@@ -82,7 +82,7 @@
                     <div>
                         <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">{{ itm.category }}</p>
                         <h4 class="text-sm font-semibold text-slate-800 line-clamp-2 group-hover:text-indigo-600 transition-colors leading-snug">
-                            <a href="{{ url_for('view_product', item_id=itm.id) }}">{{ itm.title }}</a>
+                            <a href="{{ url_for('customer.view_product', item_id=itm.id) }}">{{ itm.title }}</a>
                         </h4>
                     </div>
 
@@ -100,11 +100,11 @@
                         <i class="far fa-heart"></i>
                     </button>
 
-                    <a href="{{ url_for('view_product', item_id=itm.id) }}" class="inline-flex justify-center items-center py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200" title="View Details">
+                    <a href="{{ url_for('customer.view_product', item_id=itm.id) }}" class="inline-flex justify-center items-center py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200" title="View Details">
                         <i class="fas fa-search"></i>
                     </a>
 
-                    <form action="{{ url_for('add_to_cart', item_id=itm.id) }}" method="POST" class="w-full">
+                    <form action="{{ url_for('customer.add_to_cart', item_id=itm.id) }}" method="POST" class="w-full">
                         <button type="submit" class="w-full inline-flex justify-center items-center py-2 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-200" title="Add to Cart">
                             <i class="fas fa-shopping-cart"></i>
                         </button>

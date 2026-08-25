@@ -5,7 +5,7 @@
 
     <!-- Hero Slider / Banner Section -->
     <section class="relative rounded-2xl overflow-hidden shadow-lg bg-slate-900 group">
-        <a href="{{ url_for('products') }}" class="block relative h-[350px] md:h-[450px] w-full">
+        <a href="{{ url_for('customer.products') }}" class="block relative h-[350px] md:h-[450px] w-full">
             <img src="https://st-gdx.dancf.com/gaodingx/0/uxms/design/20210122-101837-cf22.png"
                  alt="Top Sale Slider"
                  class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.75]">
@@ -22,7 +22,7 @@
             <p class="text-sm sm:text-lg text-slate-200 max-w-md drop-shadow mb-6">
                 Explore our latest arrivals. Up to 50% off everything!
             </p>
-            <a href="{{ url_for('products') }}"
+            <a href="{{ url_for('customer.products') }}"
                class="pointer-events-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-slate-950 bg-white hover:bg-slate-100 shadow-md transform hover:-translate-y-0.5 transition-all duration-200">
                 Shop Now
                 <i class="fas fa-arrow-right ml-2 text-xs"></i>
@@ -34,7 +34,7 @@
     <section class="space-y-6">
         <div class="flex items-center justify-between border-b border-slate-200 pb-4">
             <h3 class="text-2xl font-bold tracking-tight text-slate-900">Featured Products</h3>
-            <a href="{{ url_for('products') }}" class="group text-sm font-semibold text-indigo-600 hover:text-indigo-500 flex items-center gap-1 transition-colors">
+            <a href="{{ url_for('customer.products') }}" class="group text-sm font-semibold text-indigo-600 hover:text-indigo-500 flex items-center gap-1 transition-colors">
                 View All
                 <span class="block transform group-hover:translate-x-1 transition-transform">&rarr;</span>
             </a>
@@ -47,7 +47,7 @@
 
                 <!-- Product Image Window -->
                 <div class="relative bg-slate-100 aspect-square overflow-hidden w-full">
-                    <a href="{{ url_for('view_product', item_id=itm.id) }}" class="block w-full h-full">
+                    <a href="{{ url_for('customer.view_product', item_id=itm.id) }}" class="block w-full h-full">
                         <img src="{{ itm.image }}" alt="{{ itm.title }}" class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500 ease-in-out">
                     </a>
 
@@ -90,11 +90,11 @@
         <i class="far fa-heart"></i>
     </button>
 
-    <a href="{{ url_for('products') }}" class="inline-flex justify-center items-center py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200" title="View Details">
+    <a href="{{ url_for('customer.view_product', item_id=itm.id) }}" class="inline-flex justify-center items-center py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200" title="View Details">
         <i class="fas fa-search"></i>
     </a>
 
-    <form action="{{ url_for('add_to_cart', item_id=itm.id) }}" method="POST" class="w-full">
+    <form action="{{ url_for('customer.add_to_cart', item_id=itm.id) }}" method="POST" class="w-full">
         <button type="submit" class="w-full inline-flex justify-center items-center py-2 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-200" title="Add to Cart">
             <i class="fas fa-shopping-cart"></i>
         </button>

@@ -41,18 +41,18 @@
         
         // Find elements in modal
         var form = deleteConfirmModal.querySelector('#deleteConfirmForm');
-        var nameSpan = deleteConfirmModal.querySelector('#deleteConfirmName');
-        var typeSpan = deleteConfirmModal.querySelector('#deleteConfirmType');
+        var showName = deleteConfirmModal.querySelector('#deleteConfirmName');
+        var showType = deleteConfirmModal.querySelector('#deleteConfirmType');
         
         // Update attributes & text
         if (form) {
           form.setAttribute('action', url);
         }
-        if (nameSpan) {
-          nameSpan.textContent = name;
+        if (showName) {
+          showName.textContent = name;
         }
-        if (typeSpan) {
-          typeSpan.textContent = type;
+        if (showType) {
+          showType.textContent = type;
         }
       });
     }

@@ -1,0 +1,14 @@
+# Core Web Framework & Extensions
+Flask>=3.0.0
+Flask-SQLAlchemy>=3.1.1
+Flask-Migrate>=4.0.0
+SQLAlchemy>=2.0.0
+Werkzeug>=3.0.0
+Jinja2>=3.1.0
+
+# HTTP Requests & Utilities
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# Production WSGI Server for Ubuntu / EC2
+gunicorn>=21.2.0

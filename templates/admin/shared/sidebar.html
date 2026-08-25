@@ -2,25 +2,27 @@
     <div class="position-sticky pt-3 mt-2">
         <ul class="nav flex-column gap-2 px-3">
             <li class="nav-item">
-                <a class="nav-link {{ 'active' if request.endpoint == 'admin_dashboard' else '' }}" href="{{ url_for('admin_dashboard') }}">
+                <a class="nav-link {{ 'active' if request.endpoint in ['admin_dashboard.admin_dashboard', 'admin.admin_dashboard', 'admin_dashboard'] else '' }}" href="{{ url_for('admin_dashboard.admin_dashboard') }}">
                     <i class="bi bi-speedometer2 me-3 fs-5"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ 'active' if request.endpoint == 'admin_products' else '' }}" href="{{ url_for('admin_products') }}">
+                <a class="nav-link {{ 'active' if request.endpoint in ['admin_product.admin_products', 'admin_product.add_product', 'admin_product.edit_product'] else '' }}" href="{{ url_for('admin_product.admin_products') }}">
                     <i class="bi bi-box-seam me-3 fs-5"></i> Products
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ 'active' if request.endpoint == 'admin_categories' else '' }}" href="{{ url_for('admin_categories') }}">
+                <a class="nav-link {{ 'active' if request.endpoint in ['admin_category.admin_categories', 'admin_category.add_category', 'admin_category.edit_category'] else '' }}" href="{{ url_for('admin_category.admin_categories') }}">
                     <i class="bi bi-tags me-3 fs-5"></i> Categories
                 </a>
             </li>
+            {% if session.get('role')|lower == 'admin' %}
             <li class="nav-item">
-                <a class="nav-link {{ 'active' if request.endpoint == 'admin_users' else '' }}" href="{{ url_for('admin_users') }}">
+                <a class="nav-link {{ 'active' if request.endpoint in ['admin_user.admin_users', 'admin_user.add_user', 'admin_user.edit_user', 'admin_user.user_details'] else '' }}" href="{{ url_for('admin_user.admin_users') }}">
                     <i class="bi bi-people me-3 fs-5"></i> Users
                 </a>
             </li>
+            {% endif %}
         </ul>
     </div>
 </div>

@@ -3,9 +3,9 @@
 {% block content %}
 <div class="container checkout-container">
     
-   <div class="checkout-form-section">
+    <div class="checkout-form-section">
     <h3><i class="fas fa-truck"></i> Shipping Information</h3>
-    <form id="shippingForm" action="{{ url_for('place_order') }}" method="POST">
+    <form id="shippingForm" action="{{ url_for('customer.place_order') }}" method="POST">
         <div class="form-group">
             <label>Full Name</label>
             <input type="text" name="buyer_name" placeholder="e.g. Sok Chan" required>
@@ -54,7 +54,7 @@
                 <button type="submit" form="shippingForm" class="mock-confirm-btn">
                     <i class="fas fa-check-circle"></i> I Have Paid via KHQR
                 </button>
-                <a href="{{ url_for('cart') }}" class="cancel-link">Cancel and Go Back</a>
+                <a href="{{ url_for('customer.cart') }}" class="cancel-link">Cancel and Go Back</a>
             </div>
         </div>
     </div>
