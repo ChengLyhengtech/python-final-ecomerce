@@ -1,32 +1,72 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+import os
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from sqlalchemy import text
 from auth_decorators import login_required, staff_required
+from models import db, Category, Product
+from upload_config import save_uploaded_file
 
 category_bp = Blueprint('admin_category', __name__, url_prefix='/admin')
-
-mock_categories = ["men's clothing", "jewelery", "electronics", "women's clothing"]
 
 
 @category_bp.route('/categories')
 @login_required
 @staff_required
 def admin_categories():
-    return render_template('admin/categories.html', categories=mock_categories)
+    # GET method using Raw SQL
+    query = text("""
+        SELECT c.id, c.name, c.image, c.description, COUNT(p.id) AS product_count
+        FROM categories c
+        LEFT JOIN products p ON c.id = p.category_id
+        GROUP BY c.id, c.name, c.image, c.description
+        ORDER BY c.id ASC
+    """)
+    result = db.session.execute(query)
+    categories = result.mappings().all()
+    return render_template('admin/categories.html', categories=categories)
 
 
 @category_bp.route('/categories/add', methods=['GET', 'POST'])
 @login_required
 @staff_required
 def add_category():
-    global mock_categories
     if request.method == 'POST':
-        category_name = request.form.get('category_name')
-        if category_name:
-            mock_categories.append(category_name)
-            flash(f'Category "{category_name}" added successfully!', 'success')
-            return redirect(url_for('admin_category.admin_categories'))
-        else:
+        category_name = request.form.get('category_name', '').strip()
+        description = request.form.get('description', '').strip()
+
+        if not category_name:
             flash('Category name is required.', 'danger')
+            return redirect(url_for('admin_category.add_category'))
+
+        # Check for existing duplicate name
+        existing = Category.query.filter(Category.name.ilike(category_name)).first()
+        if existing:
+            flash(f'Category "{category_name}" already exists.', 'warning')
+            return redirect(url_for('admin_category.add_category'))
+
+        upload_folder = current_app.config.get('UPLOAD_FOLDER')
+
+        try:
+            image_file = request.files.get('image')
+            image_filename = save_uploaded_file(image_file, upload_folder=upload_folder)
+
+            new_cat = Category(
+                name=category_name,
+                image=image_filename,
+                description=description or ''
+            )
+            db.session.add(new_cat)
+            db.session.commit()
+            flash(f'Category "{category_name}" created successfully!', 'success')
             return redirect(url_for('admin_category.admin_categories'))
+        except ValueError as val_err:
+            db.session.rollback()
+            flash(str(val_err), 'danger')
+            return redirect(url_for('admin_category.add_category'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error creating category: {str(e)}', 'danger')
+            return redirect(url_for('admin_category.add_category'))
+
     return render_template('admin/add_category.html')
 
 
@@ -34,34 +74,80 @@ def add_category():
 @login_required
 @staff_required
 def edit_category(category_id):
-    global mock_categories
-    if category_id - 1 >= len(mock_categories) or category_id - 1 < 0:
-        flash('Category not found.', 'danger')
-        return redirect(url_for('admin_category.admin_categories'))
-
     if request.method == 'POST':
-        category_name = request.form.get('category_name')
-        if category_name:
-            old_name = mock_categories[category_id - 1]
-            mock_categories[category_id - 1] = category_name
-            flash(f'Category changed from "{old_name}" to "{category_name}"!', 'success')
-            return redirect(url_for('admin_category.admin_categories'))
-        else:
+        cat_obj = Category.query.get_or_404(category_id)
+        category_name = request.form.get('category_name', '').strip()
+        description = request.form.get('description', '').strip()
+
+        if not category_name:
             flash('Category name is required.', 'danger')
             return redirect(url_for('admin_category.edit_category', category_id=category_id))
 
-    category_name = mock_categories[category_id - 1]
-    return render_template('admin/edit_category.html', category=category_name)
+        duplicate = Category.query.filter(Category.name.ilike(category_name), Category.id != category_id).first()
+        if duplicate:
+            flash(f'Category "{category_name}" already exists.', 'warning')
+            return redirect(url_for('admin_category.edit_category', category_id=category_id))
+
+        upload_folder = current_app.config.get('UPLOAD_FOLDER')
+
+        try:
+            image_file = request.files.get('image')
+            new_image = save_uploaded_file(image_file, upload_folder=upload_folder)
+            if new_image:
+                cat_obj.image = new_image
+
+            cat_obj.name = category_name
+            cat_obj.description = description or ''
+            db.session.commit()
+            flash(f'Category "{category_name}" updated successfully!', 'success')
+            return redirect(url_for('admin_category.admin_categories'))
+        except ValueError as val_err:
+            db.session.rollback()
+            flash(str(val_err), 'danger')
+            return redirect(url_for('admin_category.edit_category', category_id=category_id))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating category: {str(e)}', 'danger')
+            return redirect(url_for('admin_category.edit_category', category_id=category_id))
+
+    # GET method using Raw SQL
+    cat_query = text("SELECT id, name, image, description FROM categories WHERE id = :id")
+    category = db.session.execute(cat_query, {"id": category_id}).mappings().first()
+    if not category:
+        flash('Category not found.', 'danger')
+        return redirect(url_for('admin_category.admin_categories'))
+
+    return render_template('admin/edit_category.html', category=category)
 
 
 @category_bp.route('/categories/delete/<int:category_id>', methods=['POST'])
 @login_required
 @staff_required
 def delete_category(category_id):
-    global mock_categories
-    if 0 < category_id <= len(mock_categories):
-        deleted_name = mock_categories.pop(category_id - 1)
-        flash(f'Category "{deleted_name}" deleted successfully!', 'success')
-    else:
-        flash('Category not found.', 'danger')
+    category = Category.query.get_or_404(category_id)
+    try:
+        product_count = Product.query.filter_by(category_id=category_id).count()
+        if product_count > 0:
+            flash(f'Cannot delete category "{category.name}" because it is currently assigned to {product_count} product(s).', 'warning')
+            return redirect(url_for('admin_category.admin_categories'))
+
+        upload_folder = current_app.config.get('UPLOAD_FOLDER')
+        if category.image and upload_folder:
+            file_path = os.path.join(upload_folder, category.image)
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                except OSError:
+                    pass
+
+        name = category.name
+        db.session.delete(category)
+        db.session.commit()
+        flash(f'Category "{name}" deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting category: {str(e)}', 'danger')
+
     return redirect(url_for('admin_category.admin_categories'))
+
+

@@ -1,29 +1,146 @@
 {% extends 'admin/base.html' %}
 
-{% block title %}Add Category{% endblock %}
+{% block title %}Create New Category{% endblock %}
 
 {% block content %}
 <div class="page-header">
-    <h1>Add New Category</h1>
-    <a href="{{ url_for('admin_category.admin_categories') }}" class="btn btn-modern btn-modern-light"><i class="bi bi-arrow-left"></i> Back to Categories</a>
+    <div>
+        <h1 class="page-title">Create New Category</h1>
+        <p class="page-subtitle">Add a taxonomy group and upload an optional icon or cover photo.</p>
+    </div>
+    <a href="{{ url_for('admin_category.admin_categories') }}" class="btn btn-modern btn-modern-light">
+        <i class="bi bi-arrow-left"></i>
+        <span>Back to Categories</span>
+    </a>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
         <div class="card card-modern p-4">
-            <form action="{{ url_for('admin_category.add_category') }}" method="POST">
-                <div class="mb-4">
-                    <label for="newCategoryName" class="form-label fw-semibold text-muted">Category Name</label>
-                    <input type="text" class="form-control form-control-lg bg-light" id="newCategoryName"
-                        name="category_name" placeholder="e.g. Electronics" required
-                        style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+            <form action="{{ url_for('admin_category.add_category') }}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                <div class="mb-3">
+                    <label for="newCategoryName" class="form-label">Category Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-lg" id="newCategoryName"
+                           name="category_name" placeholder="e.g. Electronics, Footwear, Audio" required>
                 </div>
-                <div class="d-flex justify-content-end gap-2">
+
+                <div class="mb-3">
+                    <label class="form-label">Category Icon / Cover</label>
+                    
+                    <!-- File Upload Dropzone -->
+                    <div class="category-upload-dropzone p-3 text-center position-relative" 
+                         id="catDropzone"
+                         style="min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <input type="file" name="image" id="catImageInput" accept="image/*" class="d-none">
+
+                        <div id="catPrompt">
+                            <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-2" 
+                                 style="width: 44px; height: 44px; background-color: var(--admin-primary-light); color: var(--admin-primary);">
+                                <i class="bi bi-tag-fill fs-4"></i>
+                            </div>
+                            <span class="fw-semibold text-dark d-block mb-1 fs-7">Choose Category Image</span>
+                            <span class="text-muted fs-8">Click or drag image file here (PNG, JPG, WEBP, SVG)</span>
+                        </div>
+
+                        <div id="catPreviewWrapper" class="d-none w-100 position-relative">
+                            <div class="border rounded-3 p-1 bg-white shadow-xs mx-auto" style="width: 80px; height: 80px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                <img id="catPreviewImg" src="" alt="Category Preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center gap-2 mt-2">
+                                <span id="catFileName" class="text-truncate text-muted small" style="max-width: 180px;"></span>
+                                <button type="button" class="btn btn-sm btn-modern-danger py-0 px-2" id="removeCatImgBtn" style="font-size: 0.75rem;">
+                                    <i class="bi bi-x"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="categoryDescription" class="form-label">Description</label>
+                    <textarea class="form-control" id="categoryDescription"
+                              name="description" rows="3" placeholder="Brief summary of items in this category..."></textarea>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 pt-3 border-top">
                     <a href="{{ url_for('admin_category.admin_categories') }}" class="btn btn-modern btn-modern-light">Cancel</a>
-                    <button type="submit" class="btn btn-modern btn-modern-primary">Add Category</button>
+                    <button type="submit" class="btn btn-modern btn-modern-primary">
+                        <i class="bi bi-check-lg"></i>
+                        <span>Create Category</span>
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block content_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const catDropzone = document.getElementById('catDropzone');
+    const catImageInput = document.getElementById('catImageInput');
+    const catPrompt = document.getElementById('catPrompt');
+    const catPreviewWrapper = document.getElementById('catPreviewWrapper');
+    const catPreviewImg = document.getElementById('catPreviewImg');
+    const catFileName = document.getElementById('catFileName');
+    const removeCatImgBtn = document.getElementById('removeCatImgBtn');
+
+    catDropzone.addEventListener('click', (e) => {
+        if (e.target !== removeCatImgBtn && !removeCatImgBtn.contains(e.target)) {
+            catImageInput.click();
+        }
+    });
+
+    catImageInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                catPreviewImg.src = e.target.result;
+                catFileName.textContent = file.name;
+                catPrompt.classList.add('d-none');
+                catPreviewWrapper.classList.remove('d-none');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    removeCatImgBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        catImageInput.value = '';
+        catPreviewImg.src = '';
+        catFileName.textContent = '';
+        catPreviewWrapper.classList.add('d-none');
+        catPrompt.classList.remove('d-none');
+    });
+
+    // Drag & Drop
+    ['dragenter', 'dragover'].forEach(eventName => {
+        catDropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            catDropzone.classList.add('dragover');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        catDropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            catDropzone.classList.remove('dragover');
+        });
+    });
+
+    catDropzone.addEventListener('drop', (e) => {
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            catImageInput.files = e.dataTransfer.files;
+            const event = new Event('change');
+            catImageInput.dispatchEvent(event);
+        }
+    });
+});
+</script>
 {% endblock %}

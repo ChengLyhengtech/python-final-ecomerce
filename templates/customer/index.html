@@ -1,109 +1,228 @@
 {% extends "customer/layout.html" %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-14">
 
     <!-- Hero Slider / Banner Section -->
-    <section class="relative rounded-2xl overflow-hidden shadow-lg bg-slate-900 group">
-        <a href="{{ url_for('customer.products') }}" class="block relative h-[350px] md:h-[450px] w-full">
-            <img src="https://st-gdx.dancf.com/gaodingx/0/uxms/design/20210122-101837-cf22.png"
-                 alt="Top Sale Slider"
-                 class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.75]">
-        </a>
-
-        <!-- Absolute Content Overlay -->
-        <div class="absolute inset-0 flex flex-col justify-center items-start p-8 sm:p-12 md:p-16 pointer-events-none">
-            <span class="inline-block bg-amber-500 text-slate-950 text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-4 shadow-sm">
-                Limited Time Only
+    <section class="relative rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 group">
+        <div class="absolute inset-0 bg-cover bg-center opacity-25 group-hover:scale-105 transition-transform duration-1000 ease-out" 
+             style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80');">
+        </div>
+        <div class="relative z-10 p-8 sm:p-14 lg:p-20 flex flex-col justify-center items-start max-w-2xl text-left">
+            <span class="inline-flex items-center gap-1.5 bg-amber-400/90 text-slate-950 text-xs font-black tracking-widest uppercase px-3.5 py-1.5 rounded-full mb-4 shadow">
+                <i class="fas fa-bolt text-xs"></i> New Season Arrivals
             </span>
-            <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow-md mb-2">
-                Summer Collection
-            </h2>
-            <p class="text-sm sm:text-lg text-slate-200 max-w-md drop-shadow mb-6">
-                Explore our latest arrivals. Up to 50% off everything!
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight drop-shadow mb-4">
+                Discover Next-Level Shopping
+            </h1>
+            <p class="text-sm sm:text-lg text-slate-200 leading-relaxed drop-shadow mb-8 max-w-lg">
+                Explore hand-curated collections of high quality tech, apparel, and lifestyle accessories at unbeatable prices.
             </p>
-            <a href="{{ url_for('customer.products') }}"
-               class="pointer-events-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-slate-950 bg-white hover:bg-slate-100 shadow-md transform hover:-translate-y-0.5 transition-all duration-200">
-                Shop Now
-                <i class="fas fa-arrow-right ml-2 text-xs"></i>
-            </a>
+            <div class="flex flex-wrap gap-4 items-center">
+                <a href="{{ url_for('customer.products') }}"
+                   class="inline-flex items-center justify-center px-7 py-3.5 border border-transparent text-sm sm:text-base font-bold rounded-xl text-slate-950 bg-white hover:bg-slate-100 shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">
+                    Explore Shop
+                    <i class="fas fa-arrow-right ml-2.5 text-xs text-indigo-600"></i>
+                </a>
+                <a href="#categories-section"
+                   class="inline-flex items-center justify-center px-6 py-3.5 border border-white/20 text-sm sm:text-base font-semibold rounded-xl text-white hover:bg-white/10 backdrop-blur-sm transition-all duration-200">
+                    Browse Categories
+                </a>
+            </div>
         </div>
     </section>
 
-    <!-- Dynamic Featured Products Section -->
-    <section class="space-y-6">
+    <!-- Value Highlights Grid -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fas fa-truck-fast"></i>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-slate-900">Fast Delivery</h4>
+                <p class="text-xs text-slate-500">Free delivery on orders</p>
+            </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-slate-900">KHQR Payment</h4>
+                <p class="text-xs text-slate-500">Scan & pay with Bakong</p>
+            </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fas fa-shield-halved"></i>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-slate-900">Genuine Guarantee</h4>
+                <p class="text-xs text-slate-500">100% authentic goods</p>
+            </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+            <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl flex-shrink-0">
+                <i class="fas fa-headset"></i>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-slate-900">24/7 Support</h4>
+                <p class="text-xs text-slate-500">Instant expert care</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dynamic Category Section -->
+    {% if categories %}
+    <section id="categories-section" class="space-y-6">
         <div class="flex items-center justify-between border-b border-slate-200 pb-4">
-            <h3 class="text-2xl font-bold tracking-tight text-slate-900">Featured Products</h3>
+            <div>
+                <h2 class="text-2xl font-black tracking-tight text-slate-900">Shop By Category</h2>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Discover popular products organized by your favorite categories</p>
+            </div>
             <a href="{{ url_for('customer.products') }}" class="group text-sm font-semibold text-indigo-600 hover:text-indigo-500 flex items-center gap-1 transition-colors">
                 View All
                 <span class="block transform group-hover:translate-x-1 transition-transform">&rarr;</span>
             </a>
         </div>
 
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {% for cat in categories %}
+            <a href="{{ url_for('customer.products', category=cat.id) }}"
+               class="group relative flex flex-col items-center p-5 bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-lg hover:border-indigo-300 transition-all duration-300">
+                <div class="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 flex items-center justify-center p-2 mb-3 group-hover:scale-110 transition-transform duration-300">
+                    {% if cat.image %}
+                        <img src="{{ cat.image|media_url }}" alt="{{ cat.name }}" class="w-full h-full object-contain">
+                    {% else %}
+                        <i class="fas fa-tags text-2xl text-indigo-500"></i>
+                    {% endif %}
+                </div>
+                <h3 class="text-sm font-bold text-slate-800 text-center group-hover:text-indigo-600 transition-colors line-clamp-1">
+                    {{ cat.name }}
+                </h3>
+                <span class="text-[11px] font-medium text-slate-400 mt-1">
+                    {{ cat.products|length }} products
+                </span>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Dynamic Featured Products Section -->
+    <section class="space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+            <div>
+                <h2 class="text-2xl font-black tracking-tight text-slate-900">Featured Products</h2>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Our top picks and best sellers updated regularly</p>
+            </div>
+            <a href="{{ url_for('customer.products') }}" class="group text-sm font-semibold text-indigo-600 hover:text-indigo-500 flex items-center gap-1 transition-colors">
+                Explore All
+                <span class="block transform group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </a>
+        </div>
+
         <!-- Fully Responsive Grid Layout -->
+        {% if products %}
         <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {% for itm in item %}
-            <div class="group flex flex-col bg-white rounded-xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-slate-300 transform hover:-translate-y-1 transition-all duration-300">
+            {% for prod in products %}
+            <div class="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-indigo-200 transform hover:-translate-y-1 transition-all duration-300">
 
                 <!-- Product Image Window -->
-                <div class="relative bg-slate-100 aspect-square overflow-hidden w-full">
-                    <a href="{{ url_for('customer.view_product', item_id=itm.id) }}" class="block w-full h-full">
-                        <img src="{{ itm.image }}" alt="{{ itm.title }}" class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500 ease-in-out">
+                <div class="relative bg-slate-50 aspect-square overflow-hidden w-full flex items-center justify-center p-4">
+                    <a href="{{ url_for('customer.view_product', item_id=prod.id) }}" class="block w-full h-full">
+                        <img src="{{ prod.thumbnail|media_url }}" 
+                             alt="{{ prod.title }}" 
+                             onerror="this.onerror=null; this.src='/static/admin/img/no-profile.png';"
+                             class="w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-500 ease-in-out">
                     </a>
 
-                    <!-- Badge Notification System -->
+                    <!-- Stock Status Badge -->
                     <div class="absolute top-3 left-3 z-10">
-                        {% if itm.discount %}
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-rose-600 text-white shadow-sm">
-                                -{{ itm.discount }}%
+                        {% if prod.stock <= 0 %}
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-rose-600 text-white shadow-sm">
+                                Sold Out
+                            </span>
+                        {% elif prod.stock <= 5 %}
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-amber-500 text-slate-950 shadow-sm">
+                                Only {{ prod.stock }} Left
                             </span>
                         {% else %}
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-600 text-white shadow-sm">
-                                TOP
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-600 text-white shadow-sm">
+                                In Stock
                             </span>
                         {% endif %}
+                    </div>
+
+                    <!-- Wishlist Floating Icon -->
+                    <div class="absolute top-3 right-3 z-10">
+                        <form action="{{ url_for('customer.toggle_wishlist', item_id=prod.id) }}" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" 
+                                    class="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm shadow flex items-center justify-center transition-all duration-200 hover:scale-110 {{ 'text-rose-500' if prod.id in wishlist_ids else 'text-slate-400 hover:text-rose-500' }}"
+                                    title="{{ 'Remove from Wishlist' if prod.id in wishlist_ids else 'Add to Wishlist' }}">
+                                <i class="{{ 'fas fa-heart text-rose-500' if prod.id in wishlist_ids else 'far fa-heart' }} text-sm"></i>
+                            </button>
+                        </form>
                     </div>
                 </div>
 
-                <!-- Product Text Configurations -->
-                <div class="p-4 flex-grow flex flex-col justify-between space-y-2">
+                <!-- Product Details -->
+                <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
                     <div>
-                        <p class="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">{{ itm.category }}</p>
-                        <h4 class="text-base font-semibold text-slate-800 line-clamp-1 group-hover:text-indigo-600 transition-colors">
-                            {{ itm.title }}
-                        </h4>
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-indigo-600 mb-1">
+                            {{ prod.category.name if prod.category else 'General' }}
+                        </p>
+                        <h3 class="text-sm sm:text-base font-semibold text-slate-800 line-clamp-2 group-hover:text-indigo-600 transition-colors leading-snug">
+                            <a href="{{ url_for('customer.view_product', item_id=prod.id) }}">{{ prod.title }}</a>
+                        </h3>
                     </div>
 
-                    <div class="flex items-baseline gap-2 pt-1">
-                        {% if itm.old_price %}
-                            <span class="text-sm font-medium text-slate-400 line-through">${{ itm.old_price }}</span>
-                            <span class="text-lg font-bold text-rose-600">${{ itm.price }}</span>
-                        {% else %}
-                            <span class="text-lg font-bold text-slate-900">${{ itm.price }}</span>
-                        {% endif %}
+                    <div class="flex items-center justify-between pt-1">
+                        <div>
+                            <span class="text-lg sm:text-xl font-black text-slate-900">${{ "%.2f"|format(prod.price) }}</span>
+                        </div>
+                        <span class="text-xs text-slate-400 font-medium">
+                            Stock: {{ prod.stock }}
+                        </span>
                     </div>
                 </div>
 
                 <!-- Action Button Matrix Footer -->
-               <div class="p-4 pt-0 grid grid-cols-3 gap-2 border-t border-slate-50 mt-auto">
-    <button class="inline-flex justify-center items-center py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors duration-200" title="Add to Favourites">
-        <i class="far fa-heart"></i>
-    </button>
+                <div class="p-3 pt-0 grid grid-cols-2 gap-2 border-t border-slate-100 mt-auto bg-slate-50/50">
+                    <a href="{{ url_for('customer.view_product', item_id=prod.id) }}" 
+                       class="inline-flex justify-center items-center py-2.5 px-3 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900 text-xs font-bold transition-colors duration-200 shadow-sm"
+                       title="View Details">
+                        <i class="fas fa-eye mr-1.5 text-xs"></i> Details
+                    </a>
 
-    <a href="{{ url_for('customer.view_product', item_id=itm.id) }}" class="inline-flex justify-center items-center py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200" title="View Details">
-        <i class="fas fa-search"></i>
-    </a>
-
-    <form action="{{ url_for('customer.add_to_cart', item_id=itm.id) }}" method="POST" class="w-full">
-        <button type="submit" class="w-full inline-flex justify-center items-center py-2 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-200" title="Add to Cart">
-            <i class="fas fa-shopping-cart"></i>
-        </button>
-    </form>
-</div>
+                    {% if prod.stock > 0 %}
+                    <form action="{{ url_for('customer.add_to_cart', item_id=prod.id) }}" method="POST" class="w-full">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <button type="submit" 
+                                class="w-full inline-flex justify-center items-center py-2.5 px-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-xs font-bold shadow-sm hover:shadow transition-all duration-200"
+                                title="Add to Cart">
+                            <i class="fas fa-shopping-cart mr-1.5 text-xs"></i> Cart
+                        </button>
+                    </form>
+                    {% else %}
+                    <button disabled 
+                            class="w-full inline-flex justify-center items-center py-2.5 px-3 rounded-xl bg-slate-200 text-slate-400 text-xs font-bold cursor-not-allowed">
+                        Sold Out
+                    </button>
+                    {% endif %}
+                </div>
 
             </div>
             {% endfor %}
         </div>
+        {% else %}
+        <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center">
+            <i class="fas fa-box-open text-4xl text-slate-300 mb-3"></i>
+            <h3 class="text-lg font-bold text-slate-700">No products available yet</h3>
+            <p class="text-sm text-slate-400">Products added from the admin panel will appear here.</p>
+        </div>
+        {% endif %}
     </section>
 
 </div>

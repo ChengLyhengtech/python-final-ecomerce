@@ -1,11 +1,14 @@
 import unittest
 from app import app, db, User
+from extensions import limiter
 
 
 class AuthTestCase(unittest.TestCase):
     def setUp(self):
         app.config['TESTING'] = True
         app.config['WTF_CSRF_ENABLED'] = False
+        app.config['RATELIMIT_ENABLED'] = False
+        limiter.enabled = False
         self.client = app.test_client()
 
         with app.app_context():

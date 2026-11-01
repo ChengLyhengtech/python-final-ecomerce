@@ -1,32 +1,43 @@
 {% extends 'admin/base.html' %}
 
-{% block title %}Edit User{% endblock %}
+{% block title %}Edit User: {{ user.username }}{% endblock %}
 
 {% block content %}
 <div class="page-header mb-4">
-    <h1>Edit User</h1>
-    <a href="{{ url_for('admin_user.admin_users') }}" class="btn btn-modern btn-modern-light">
-        <i class="bi bi-arrow-left"></i> Back to Users
-    </a>
+    <div>
+        <h1 class="page-title">Edit User</h1>
+        <p class="page-subtitle">Update account details, role permissions, or reset password.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <a href="{{ url_for('admin_user.user_details', user_id=user.id) }}" class="btn btn-modern btn-modern-light">
+            <i class="bi bi-eye"></i>
+            <span>View Details</span>
+        </a>
+        <a href="{{ url_for('admin_user.admin_users') }}" class="btn btn-modern btn-modern-light">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Users</span>
+        </a>
+    </div>
 </div>
 
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
-        <div class="card card-modern p-4 shadow-sm">
+        <div class="card card-modern p-4">
             <form action="{{ url_for('admin_user.edit_user', user_id=user.id) }}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
                 <!-- Profile Image Upload Section -->
                 <div class="mb-4 text-center">
-                    <label for="profileUpload" class="position-relative d-inline-block" style="cursor: pointer;">
+                    <label for="profileUpload" class="position-relative d-inline-block" style="cursor: pointer;" title="Click to change avatar">
                         <img id="profilePreview"
                              src="{% if user.profile_image and user.profile_image != 'no-profile.png' %}{{ url_for('static', filename='admin/uploads/' ~ user.profile_image) }}{% else %}{{ url_for('static', filename='admin/img/no-profile.png') }}{% endif %}"
                              alt="Profile Preview"
-                             class="rounded-circle border"
-                             style="width: 120px; height: 120px; object-fit: cover;">
+                             class="rounded-circle border shadow-xs"
+                             style="width: 100px; height: 100px; object-fit: cover;">
 
-                        <span class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                               style="width: 32px; height: 32px; border: 2px solid white;">
-                            <i class="bi bi-camera-fill" style="font-size: 0.875rem;"></i>
+                        <span class="position-absolute bottom-0 end-0 rounded-circle d-flex align-items-center justify-content-center shadow-xs"
+                              style="width: 32px; height: 32px; background-color: var(--admin-primary); color: white; border: 2px solid white;">
+                            <i class="bi bi-camera-fill" style="font-size: 0.85rem;"></i>
                         </span>
 
                         <input type="file" id="profileUpload" name="profile" accept="image/*" class="d-none">
@@ -35,54 +46,53 @@
                 </div>
 
                 <!-- Username Field -->
-                <div class="mb-4">
-                    <label for="userName" class="form-label fw-semibold text-muted">Username <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control form-control-lg bg-light" id="userName"
-                        name="username" value="{{ user.username }}" required
-                        style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+                <div class="mb-3">
+                    <label for="userName" class="form-label">Username <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="userName"
+                           name="username" value="{{ user.username }}" required>
                 </div>
 
                 <!-- Email Field -->
-                <div class="mb-4">
-                    <label for="userEmail" class="form-label fw-semibold text-muted">Email Address <span class="text-danger">*</span></label>
-                    <input type="email" class="form-control form-control-lg bg-light" id="userEmail"
-                        name="email" value="{{ user.email }}" required
-                        style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+                <div class="mb-3">
+                    <label for="userEmail" class="form-label">Email Address <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="userEmail"
+                           name="email" value="{{ user.email }}" required>
                 </div>
 
                 <!-- Password Field (Optional on edit) -->
-                <div class="mb-4">
-                    <label for="userPassword" class="form-label fw-semibold text-muted">New Password (Leave blank to keep current)</label>
-                    <input type="password" class="form-control form-control-lg bg-light" id="userPassword"
-                        name="password" placeholder="Enter new password if changing" minlength="6"
-                        style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+                <div class="mb-3">
+                    <label for="userPassword" class="form-label">New Password</label>
+                    <input type="password" class="form-control" id="userPassword"
+                           name="password" placeholder="Leave blank to keep existing password" minlength="6">
+                    <span class="text-muted fs-8 d-block mt-1">Leave empty unless you wish to reset user's password.</span>
                 </div>
 
                 <!-- Phone Number Field -->
-                <div class="mb-4">
-                    <label for="userPhone" class="form-label fw-semibold text-muted">Phone Number</label>
-                    <input type="text" class="form-control form-control-lg bg-light" id="userPhone"
-                        name="phone_number" value="{{ user.phone_number or '' }}"
-                        placeholder="e.g. +855 12 345 678"
-                        style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+                <div class="mb-3">
+                    <label for="userPhone" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="userPhone"
+                           name="phone_number" value="{{ user.phone_number or '' }}"
+                           placeholder="e.g. +855 12 345 678">
                 </div>
 
                 <!-- Role Dropdown -->
                 <div class="mb-4">
-                    <label for="userRole" class="form-label fw-semibold text-muted">Role <span class="text-danger">*</span></label>
-                    <select class="form-select form-select-lg bg-light" id="userRole" name="role" required
-                        style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
-                        <option value="admin" {% if user.role|lower == 'admin' %}selected{% endif %}>Admin</option>
+                    <label for="userRole" class="form-label">Role <span class="text-danger">*</span></label>
+                    <select class="form-select" id="userRole" name="role" required>
+                        <option value="admin" {% if user.role|lower == 'admin' %}selected{% endif %}>Admin (Full Access)</option>
                         <option value="staff" {% if user.role|lower == 'staff' %}selected{% endif %}>Staff</option>
                         <option value="editor" {% if user.role|lower == 'editor' %}selected{% endif %}>Editor</option>
-                        <option value="user" {% if user.role|lower == 'user' or user.role|lower not in ['admin', 'staff', 'editor'] %}selected{% endif %}>User</option>
+                        <option value="user" {% if user.role|lower == 'user' or user.role|lower not in ['admin', 'staff', 'editor'] %}selected{% endif %}>User (Standard)</option>
                     </select>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="d-flex justify-content-end gap-2 mt-5">
+                <div class="d-flex justify-content-end gap-2 pt-3 border-top">
                     <a href="{{ url_for('admin_user.admin_users') }}" class="btn btn-modern btn-modern-light">Cancel</a>
-                    <button type="submit" class="btn btn-modern btn-modern-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-modern btn-modern-primary">
+                        <i class="bi bi-check2"></i>
+                        <span>Save Changes</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -97,7 +107,7 @@
         var profilePreview = document.getElementById('profilePreview');
         if (profileUpload && profilePreview) {
             profileUpload.addEventListener('change', function(e) {
-                var file = e.target.files[0];
+                var file = e.target.files && e.target.files[0];
                 if (file) {
                     var reader = new FileReader();
                     reader.onload = function(event) {

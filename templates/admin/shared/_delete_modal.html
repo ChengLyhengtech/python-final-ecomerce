@@ -1,25 +1,37 @@
 <div class="modal fade" id="deleteConfirmModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg" style="border-radius: 0.75rem;">
-      <div class="modal-header border-0 bg-light py-3">
-        <h5 class="modal-title fw-bold text-dark" id="deleteConfirmModalLabel">Confirm Deletion</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body p-4">
-        <div class="d-flex align-items-start gap-3">
-          <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; flex-shrink: 0;">
-            <i class="bi bi-exclamation-triangle-fill fs-4"></i>
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;">
+    <div class="modal-content border-0 shadow-xl">
+      <div class="modal-header border-0 pb-0 pt-4 px-4">
+        <div class="d-flex align-items-center justify-content-between w-100">
+          <div class="d-flex align-items-center gap-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; background-color: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); flex-shrink: 0;">
+              <i class="bi bi-trash3-fill fs-5"></i>
+            </div>
+            <div>
+              <h5 class="modal-title fw-bold text-dark mb-0" id="deleteConfirmModalLabel" style="letter-spacing: -0.01em;">Confirm Deletion</h5>
+              <span class="text-muted small">Action cannot be reversed</span>
+            </div>
           </div>
-          <div>
-            <p class="mb-2 text-dark fw-semibold">Are you sure you want to delete this <span id="deleteConfirmType" class="text-lowercase text-primary fw-bold">item</span>?</p>
-            <p class="text-muted mb-0 fs-7">You are about to delete <strong id="deleteConfirmName" class="text-dark"></strong>. This action cannot be undone.</p>
-          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
       </div>
-      <div class="modal-footer border-0 bg-light py-3">
-        <button type="button" class="btn btn-modern btn-modern-light" data-bs-dismiss="modal">Cancel</button>
+      <div class="modal-body px-4 py-3">
+        <p class="text-secondary mb-1">
+          Are you sure you want to permanently delete this <strong id="deleteConfirmType" class="text-dark">item</strong>?
+        </p>
+        <div class="p-2 px-3 rounded-2 mt-2 bg-light border text-truncate">
+          <span class="text-muted small d-block">Target item:</span>
+          <strong id="deleteConfirmName" class="text-dark font-monospace fs-7"></strong>
+        </div>
+      </div>
+      <div class="modal-footer border-0 px-4 pb-4 pt-2">
+        <button type="button" class="btn btn-modern btn-modern-light px-3" data-bs-dismiss="modal">Cancel</button>
         <form id="deleteConfirmForm" action="" method="POST" class="m-0">
-          <button type="submit" class="btn btn-modern btn-modern-danger"><i class="bi bi-trash"></i> Delete</button>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+          <button type="submit" class="btn btn-modern btn-modern-danger px-3">
+            <i class="bi bi-trash"></i>
+            <span>Delete Permanently</span>
+          </button>
         </form>
       </div>
     </div>
@@ -31,29 +43,20 @@
     var deleteConfirmModal = document.getElementById('deleteConfirmModal');
     if (deleteConfirmModal) {
       deleteConfirmModal.addEventListener('show.bs.modal', function(event) {
-        // Button that triggered the modal
         var button = event.relatedTarget;
+        if (!button) return;
         
-        // Extract info from data-* attributes
         var url = button.getAttribute('data-url');
         var name = button.getAttribute('data-name');
         var type = button.getAttribute('data-type');
         
-        // Find elements in modal
         var form = deleteConfirmModal.querySelector('#deleteConfirmForm');
         var showName = deleteConfirmModal.querySelector('#deleteConfirmName');
         var showType = deleteConfirmModal.querySelector('#deleteConfirmType');
         
-        // Update attributes & text
-        if (form) {
-          form.setAttribute('action', url);
-        }
-        if (showName) {
-          showName.textContent = name;
-        }
-        if (showType) {
-          showType.textContent = type;
-        }
+        if (form) form.setAttribute('action', url || '');
+        if (showName) showName.textContent = name || 'Selected item';
+        if (showType) showType.textContent = type || 'item';
       });
     }
   });

@@ -1,28 +1,56 @@
 <div id="sidebarMenu" class="sidebar col-md-3 col-lg-2 d-md-block collapse p-0">
-    <div class="position-sticky pt-3 mt-2">
-        <ul class="nav flex-column gap-2 px-3">
+    <div class="position-sticky pt-3">
+        <div class="px-3 pb-2">
+            <span class="nav-section-title">Main Menu</span>
+        </div>
+        
+        <ul class="nav flex-column px-2">
             <li class="nav-item">
-                <a class="nav-link {{ 'active' if request.endpoint in ['admin_dashboard.admin_dashboard', 'admin.admin_dashboard', 'admin_dashboard'] else '' }}" href="{{ url_for('admin_dashboard.admin_dashboard') }}">
-                    <i class="bi bi-speedometer2 me-3 fs-5"></i> Dashboard
+                <a class="nav-link {{ 'active' if request.endpoint in ['admin_dashboard.admin_dashboard', 'admin.admin_dashboard', 'admin_dashboard'] else '' }}" 
+                   href="{{ url_for('admin_dashboard.admin_dashboard') }}">
+                    <i class="bi bi-grid-1x2-fill me-3"></i>
+                    <span>Dashboard</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ 'active' if request.endpoint in ['admin_product.admin_products', 'admin_product.add_product', 'admin_product.edit_product'] else '' }}" href="{{ url_for('admin_product.admin_products') }}">
-                    <i class="bi bi-box-seam me-3 fs-5"></i> Products
+                <a class="nav-link {{ 'active' if request.endpoint in ['admin_product.admin_products', 'admin_product.add_product', 'admin_product.edit_product', 'admin_product.product_details'] else '' }}" 
+                   href="{{ url_for('admin_product.admin_products') }}">
+                    <i class="bi bi-box-seam-fill me-3"></i>
+                    <span>Products</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ 'active' if request.endpoint in ['admin_category.admin_categories', 'admin_category.add_category', 'admin_category.edit_category'] else '' }}" href="{{ url_for('admin_category.admin_categories') }}">
-                    <i class="bi bi-tags me-3 fs-5"></i> Categories
+                <a class="nav-link {{ 'active' if request.endpoint in ['admin_category.admin_categories', 'admin_category.add_category', 'admin_category.edit_category'] else '' }}" 
+                   href="{{ url_for('admin_category.admin_categories') }}">
+                    <i class="bi bi-tags-fill me-3"></i>
+                    <span>Categories</span>
                 </a>
             </li>
-            {% if session.get('role')|lower == 'admin' %}
-            <li class="nav-item">
-                <a class="nav-link {{ 'active' if request.endpoint in ['admin_user.admin_users', 'admin_user.add_user', 'admin_user.edit_user', 'admin_user.user_details'] else '' }}" href="{{ url_for('admin_user.admin_users') }}">
-                    <i class="bi bi-people me-3 fs-5"></i> Users
-                </a>
-            </li>
-            {% endif %}
         </ul>
+
+        {% if session.get('role')|lower == 'admin' %}
+        <div class="px-3 pt-3 pb-2">
+            <span class="nav-section-title">Administration</span>
+        </div>
+        <ul class="nav flex-column px-2">
+            <li class="nav-item">
+                <a class="nav-link {{ 'active' if request.endpoint in ['admin_user.admin_users', 'admin_user.add_user', 'admin_user.edit_user', 'admin_user.user_details'] else '' }}" 
+                   href="{{ url_for('admin_user.admin_users') }}">
+                    <i class="bi bi-people-fill me-3"></i>
+                    <span>Users & Access</span>
+                </a>
+            </li>
+        </ul>
+        {% endif %}
+
+        <div class="px-3 pt-4 pb-2 mt-auto">
+            <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06);">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="d-inline-block rounded-circle bg-success" style="width: 8px; height: 8px;"></span>
+                    <span class="text-white-50 fs-8 fw-semibold text-uppercase" style="letter-spacing: 0.05em;">System Status</span>
+                </div>
+                <div class="text-white small fw-medium">All systems operational</div>
+            </div>
+        </div>
     </div>
 </div>

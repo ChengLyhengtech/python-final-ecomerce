@@ -1,0 +1,210 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Product Details - {{ product.title }}{% endblock %}
+
+{% block content %}
+<div class="page-header mb-4">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <h1 class="page-title mb-0">{{ product.title }}</h1>
+        <span class="badge badge-soft-neutral">ID #{{ product.id }}</span>
+        {% if product.stock > 10 %}
+            <span class="badge badge-soft-success px-3 py-1">In Stock ({{ product.stock }})</span>
+        {% elif product.stock > 0 %}
+            <span class="badge badge-soft-warning px-3 py-1">Low Stock ({{ product.stock }})</span>
+        {% else %}
+            <span class="badge badge-soft-danger px-3 py-1">Out of Stock</span>
+        {% endif %}
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <a href="{{ url_for('admin_product.admin_products') }}" class="btn btn-modern btn-modern-light">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back</span>
+        </a>
+        <a href="{{ url_for('admin_product.edit_product', product_id=product.id) }}" class="btn btn-modern btn-modern-primary">
+            <i class="bi bi-pencil"></i>
+            <span>Edit</span>
+        </a>
+        <button type="button" class="btn btn-modern btn-modern-danger" 
+                data-bs-toggle="modal" 
+                data-bs-target="#deleteConfirmModal" 
+                data-url="{{ url_for('admin_product.delete_product', product_id=product.id) }}" 
+                data-name="{{ product.title | e }}" 
+                data-type="product">
+            <i class="bi bi-trash"></i>
+            <span>Delete</span>
+        </button>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Left Column: Media Gallery & Description -->
+    <div class="col-lg-6">
+        <div class="card card-modern p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-images text-primary"></i>
+                    <h5 class="fw-bold mb-0 text-dark" style="font-size: 1rem;">Product Imagery</h5>
+                </div>
+                <span class="badge badge-soft-primary">
+                    {{ (product.images|length) + (1 if product.thumbnail else 0) }} Photo(s)
+                </span>
+            </div>
+
+            <!-- Main Featured Image Display -->
+            {% set default_cover = product.thumbnail or (product.images[0].image_url if product.images else '') %}
+            <div class="border rounded-3 p-3 text-center mb-3 position-relative" 
+                 style="background: #f8fafc; height: 380px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                <img id="mainImageDisplay" 
+                     src="{{ default_cover | media_url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500') }}" 
+                     alt="{{ product.title }}" 
+                     style="max-width: 100%; max-height: 100%; object-fit: contain; transition: opacity 0.2s ease;">
+            </div>
+
+            <!-- Thumbnail Carousel / Grid -->
+            <div class="d-flex gap-2 overflow-auto pb-2" id="galleryThumbnails">
+                {% if product.thumbnail %}
+                <div class="gallery-thumb-item active" 
+                     onclick="switchMainImage('{{ product.thumbnail | media_url }}', this)">
+                    <img src="{{ product.thumbnail | media_url }}" alt="Cover">
+                </div>
+                {% endif %}
+
+                {% for img in product.images %}
+                <div class="gallery-thumb-item {% if not product.thumbnail and loop.first %}active{% endif %}" 
+                     onclick="switchMainImage('{{ img.image_url | media_url }}', this)">
+                    <img src="{{ img.image_url | media_url }}" alt="Gallery Image {{ loop.index }}">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Description Card -->
+        <div class="card card-modern p-4">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                <i class="bi bi-text-paragraph text-primary"></i>
+                <h5 class="fw-bold mb-0 text-dark" style="font-size: 1rem;">Product Description</h5>
+            </div>
+            <div class="text-secondary lh-lg" style="white-space: pre-line; font-size: 0.9rem;">
+                {{ product.description or 'No product description provided.' }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Specs, Margins & Inventory -->
+    <div class="col-lg-6">
+        <!-- Price & Margin Card -->
+        <div class="card card-modern p-4 mb-4">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                <i class="bi bi-currency-dollar text-primary"></i>
+                <h5 class="fw-bold mb-0 text-dark" style="font-size: 1rem;">Pricing & Margins</h5>
+            </div>
+            
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3 border">
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1 fs-8">Selling Price</span>
+                        <h3 class="fw-bold text-dark mb-0 font-monospace">${{ "%.2f"|format(product.price or 0) }}</h3>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3 border">
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1 fs-8">Cost Price</span>
+                        <h3 class="fw-bold text-muted mb-0 font-monospace">${{ "%.2f"|format(product.cost or 0) }}</h3>
+                    </div>
+                </div>
+
+                {% set margin_dollar = (product.price or 0) - (product.cost or 0) %}
+                {% set margin_percent = ((margin_dollar / product.price) * 100) if product.price and product.price > 0 else 0 %}
+                
+                <div class="col-6">
+                    <div class="p-3 rounded-3 border" style="background-color: var(--admin-primary-light); border-color: var(--admin-primary-border) !important;">
+                        <span class="small fw-semibold text-uppercase d-block mb-1 fs-8" style="color: var(--admin-primary);">Gross Margin ($)</span>
+                        <h4 class="fw-bold mb-0 font-monospace" style="color: var(--admin-primary);">${{ "%.2f"|format(margin_dollar) }}</h4>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-3 rounded-3 border" style="background-color: var(--success-bg); border-color: var(--success-border) !important;">
+                        <span class="small fw-semibold text-uppercase d-block mb-1 fs-8" style="color: var(--success-text);">Profit Margin (%)</span>
+                        <h4 class="fw-bold mb-0 font-monospace" style="color: var(--success-text);">{{ "%.1f"|format(margin_percent) }}%</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Specifications & Inventory Card -->
+        <div class="card card-modern p-4 mb-4">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                <i class="bi bi-sliders text-primary"></i>
+                <h5 class="fw-bold mb-0 text-dark" style="font-size: 1rem;">Inventory & Classification</h5>
+            </div>
+            
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <div class="p-3 bg-light rounded-3 border">
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1 fs-8">Category</span>
+                        <span class="badge badge-soft-primary px-3 py-1 fs-7 text-capitalize">
+                            {{ product.category.name if product.category else 'Uncategorized' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="p-3 bg-light rounded-3 border">
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1 fs-8">Available Stock</span>
+                        <span class="fw-bold fs-6 text-dark">{{ product.stock }} units</span>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="p-3 bg-light rounded-3 border">
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1 fs-8">Created By</span>
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                            <i class="bi bi-person-circle fs-5 text-muted"></i>
+                            <span class="fw-semibold text-dark">{{ product.owner.username if product.owner else 'Admin' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="p-3 bg-light rounded-3 border">
+                        <span class="text-muted small fw-semibold text-uppercase d-block mb-1 fs-8">SKU / Reference</span>
+                        <span class="fw-semibold text-dark font-monospace">PRD-{{ product.id }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Card -->
+        <div class="card card-modern p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold text-dark mb-1">Quick Action</h6>
+                    <span class="text-muted small">Update product details or upload additional photos.</span>
+                </div>
+                <a href="{{ url_for('admin_product.edit_product', product_id=product.id) }}" class="btn btn-modern btn-modern-primary">
+                    <i class="bi bi-pencil-square"></i>
+                    <span>Edit Product</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content_scripts %}
+<script>
+function switchMainImage(imageUrl, thumbElement) {
+    const mainImg = document.getElementById('mainImageDisplay');
+    if (!mainImg) return;
+    
+    mainImg.style.opacity = '0';
+    setTimeout(() => {
+        mainImg.src = imageUrl;
+        mainImg.style.opacity = '1';
+    }, 120);
+
+    document.querySelectorAll('.gallery-thumb-item').forEach(el => el.classList.remove('active'));
+    thumbElement.classList.add('active');
+}
+</script>
+{% endblock %}

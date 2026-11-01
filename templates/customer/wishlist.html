@@ -1,24 +1,130 @@
 {% extends "customer/layout.html" %}
 
 {% block content %}
-<div class="container">
-    <h2 class="page-title">My Wishlist</h2>
-    
-    <div class="product-grid">
-        <div class="product-card">
-            <div class="product-image">
-                <img src="https://i.pinimg.com/736x/f4/de/3c/f4de3c3fdf3dac19cb525da78886af76.jpg" alt="">
-                <button class="remove-wishlist" title="Remove">&times;</button>
-            </div>
-            <div class="product-details">
-                <h4>Leather Crossbody Bag</h4>
-                <p class="product-category">Accessories</p>
-                <span class="price">$120.00</span>
-            </div>
-            <button class="action-btn cart-btn" style="width: 100%; border-radius: 0 0 8px 8px;">
-                Add to Cart
-            </button>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+                <i class="fas fa-heart text-rose-500"></i> My Wishlist
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">Saved favorites you want to purchase later</p>
         </div>
+
+        {% if products %}
+        <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-slate-500">{{ products|length }} items saved</span>
+            <form action="{{ url_for('customer.clear_wishlist') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button type="submit" 
+                        onclick="return confirm('Clear all items from your wishlist?');"
+                        class="px-3 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-colors">
+                    <i class="fas fa-trash-can mr-1"></i> Clear Wishlist
+                </button>
+            </form>
         </div>
+        {% endif %}
+    </div>
+
+    {% if products %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for prod in products %}
+        <div class="group flex flex-col bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-indigo-200 transform hover:-translate-y-1 transition-all duration-300">
+            
+            <!-- Image & Remove Tag -->
+            <div class="relative bg-slate-50 aspect-square overflow-hidden w-full p-4 flex items-center justify-center">
+                <a href="{{ url_for('customer.view_product', item_id=prod.id) }}" class="block w-full h-full">
+                    <img src="{{ prod.thumbnail|media_url }}" 
+                         alt="{{ prod.title }}" 
+                         onerror="this.onerror=null; this.src='/static/admin/img/no-profile.png';"
+                         class="w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-500 ease-in-out">
+                </a>
+
+                <!-- Remove Button (Cross Icon) -->
+                <form action="{{ url_for('customer.remove_from_wishlist', item_id=prod.id) }}" method="POST" class="absolute top-3 right-3 z-10">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" 
+                            title="Remove from wishlist"
+                            class="w-8 h-8 rounded-full bg-white/90 shadow text-slate-400 hover:text-rose-600 flex items-center justify-center transition-colors">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </form>
+
+                <!-- Stock Badge -->
+                <div class="absolute top-3 left-3 z-10">
+                    {% if prod.stock <= 0 %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-600 text-white shadow-sm">
+                            Sold Out
+                        </span>
+                    {% else %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-600 text-white shadow-sm">
+                            In Stock
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Details -->
+            <div class="p-4 flex-grow flex flex-col justify-between space-y-2">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider text-indigo-600">
+                        {{ prod.category.name if prod.category else 'General' }}
+                    </span>
+                    <h3 class="text-sm font-bold text-slate-800 line-clamp-2 hover:text-indigo-600 transition-colors leading-snug">
+                        <a href="{{ url_for('customer.view_product', item_id=prod.id) }}">{{ prod.title }}</a>
+                    </h3>
+                </div>
+
+                <div class="flex items-center justify-between pt-1">
+                    <span class="text-base sm:text-lg font-black text-slate-900">${{ "%.2f"|format(prod.price) }}</span>
+                    <span class="text-xs text-slate-400">Stock: {{ prod.stock }}</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="p-3 pt-0 grid grid-cols-2 gap-2 border-t border-slate-100 mt-auto bg-slate-50/50">
+                <a href="{{ url_for('customer.view_product', item_id=prod.id) }}" 
+                   class="inline-flex justify-center items-center py-2 px-3 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900 text-xs font-bold transition-colors shadow-sm">
+                    <i class="fas fa-eye mr-1.5 text-xs"></i> View
+                </a>
+
+                {% if prod.stock > 0 %}
+                <form action="{{ url_for('customer.add_to_cart', item_id=prod.id) }}" method="POST" class="w-full">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" 
+                            class="w-full inline-flex justify-center items-center py-2 px-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-xs font-bold shadow-sm hover:shadow transition-all">
+                        <i class="fas fa-shopping-cart mr-1.5 text-xs"></i> To Cart
+                    </button>
+                </form>
+                {% else %}
+                <button disabled 
+                        class="w-full inline-flex justify-center items-center py-2 px-3 rounded-xl bg-slate-200 text-slate-400 text-xs font-bold cursor-not-allowed">
+                    Sold Out
+                </button>
+                {% endif %}
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- Empty Wishlist State -->
+    <div class="bg-white rounded-3xl border border-slate-200/80 p-12 sm:p-16 text-center max-w-lg mx-auto space-y-4 shadow-sm">
+        <div class="w-20 h-20 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center text-3xl mx-auto shadow-inner">
+            <i class="far fa-heart"></i>
+        </div>
+        <h2 class="text-xl font-black text-slate-900">Your Wishlist is Empty</h2>
+        <p class="text-sm text-slate-500">
+            Explore our store catalog and click the heart icon on any product to save it here for later.
+        </p>
+        <div class="pt-2">
+            <a href="{{ url_for('customer.products') }}" 
+               class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-2xl shadow-md hover:shadow-lg transition-all">
+                <i class="fas fa-bag-shopping"></i> Browse Products
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 {% endblock %}

@@ -1,5 +1,23 @@
 from functools import wraps
-from flask import session, flash, redirect, url_for, request
+from flask import session, flash, redirect, url_for, request, g
+from werkzeug.local import LocalProxy
+
+
+def get_current_user():
+    """
+    Returns the currently authenticated User instance from the DB,
+    cached per-request on Flask g context.
+    """
+    user_id = session.get("user_id")
+    if not user_id:
+        return None
+    if not hasattr(g, "_current_user") or g._current_user is None or getattr(g._current_user, "id", None) != user_id:
+        from models import User
+        g._current_user = User.query.get(user_id)
+    return g._current_user
+
+
+current_user = LocalProxy(get_current_user)
 
 
 def login_required(view):

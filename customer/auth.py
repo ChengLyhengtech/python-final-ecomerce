@@ -1,10 +1,13 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+
+from extensions import limiter
 from models import db, User
 
 auth_bp = Blueprint('auth', __name__)
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit("60 per minute")
 def login():
     if request.method == 'POST':
         identifier = request.form.get('username', '').strip()

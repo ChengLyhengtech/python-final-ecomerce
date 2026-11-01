@@ -4,51 +4,113 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>Products</h1>
-    <a href="{{ url_for('admin_product.add_product') }}" class="btn btn-modern btn-modern-primary"><i class="bi bi-plus-lg"></i> Add New Product</a>
+    <div>
+        <h1 class="page-title">Products</h1>
+        <p class="page-subtitle">Manage store catalog, pricing, inventory levels, and product galleries.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <a href="{{ url_for('admin_product.add_product') }}" class="btn btn-modern btn-modern-primary">
+            <i class="bi bi-plus-lg"></i>
+            <span>Add New Product</span>
+        </a>
+    </div>
 </div>
 
+<!-- Product Table Container -->
 <div class="table-modern">
-    <table class="table table-hover align-middle mb-0">
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Rating</th>
-                <th class="text-end">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in products %}
-            <tr>
-                <td>
-                    <div class="bg-white border rounded p-1" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                        <img src="{{ item.image }}" alt="{{ item.title }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                    </div>
-                </td>
-                <td>
-                    <div class="text-truncate fw-medium" style="max-width: 250px;">{{ item.title }}</div>
-                </td>
-                <td><span class="badge badge-soft-primary px-2 py-1 text-capitalize">{{ item.category }}</span></td>
-                <td class="fw-semibold">${{ item.price }}</td>
-                <td>
-                    <div class="d-flex align-items-center gap-1">
-                        <i class="bi bi-star-fill text-warning" style="font-size: 0.875rem;"></i>
-                        <span class="fw-medium">{{ item.rating.rate }}</span>
-                        <span class="text-muted fs-7">({{ item.rating.count }})</span>
-                    </div>
-                </td>
-                <td class="text-end">
-                    <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ url_for('admin_product.edit_product', product_id=item.id) }}" class="btn btn-sm btn-modern btn-modern-info"><i class="bi bi-pencil"></i></a>
-                        <button type="button" class="btn btn-sm btn-modern btn-modern-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-url="/admin/products/delete/{{ item.id }}" data-name="{{ item.title | e }}" data-type="product"><i class="bi bi-trash"></i></button>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 60px;">Image</th>
+                    <th>Product Title</th>
+                    <th>Category</th>
+                    <th>Cost</th>
+                    <th>Price</th>
+                    <th>Stock Level</th>
+                    <th>Created By</th>
+                    <th class="text-end" style="width: 110px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in products %}
+                <tr style="cursor: pointer;" onclick="if(!event.target.closest('a, button, .action-btn, form')) window.location.href='{{ url_for('admin_product.product_details', product_id=item.id) }}';">
+                    <td>
+                        <div class="table-thumbnail">
+                            <img src="{{ item.thumbnail | media_url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100') }}"
+                                 alt="{{ item.title }}"
+                                 onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100'">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-semibold text-dark text-truncate" style="max-width: 260px;">{{ item.title }}</span>
+                            {% if item.image_count and item.image_count > 0 %}
+                            <span class="badge badge-soft-primary px-1 py-0 fs-8" title="{{ item.image_count }} gallery photos">
+                                <i class="bi bi-images"></i> {{ item.image_count }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        {% if item.description %}
+                        <div class="text-muted text-truncate fs-8" style="max-width: 280px;">{{ item.description }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge badge-soft-info text-capitalize">
+                            {{ item.category_name or 'Uncategorized' }}
+                        </span>
+                    </td>
+                    <td class="text-muted font-monospace fs-7">${{ "%.2f"|format(item.cost or 0) }}</td>
+                    <td class="fw-bold text-dark font-monospace fs-7">${{ "%.2f"|format(item.price or 0) }}</td>
+                    <td>
+                        {% if (item.stock or 0) > 10 %}
+                        <span class="badge badge-soft-success px-2 py-1">{{ item.stock }} in stock</span>
+                        {% elif (item.stock or 0) > 0 %}
+                        <span class="badge badge-soft-warning px-2 py-1">{{ item.stock }} low stock</span>
+                        {% else %}
+                        <span class="badge badge-soft-danger px-2 py-1">Out of stock</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-1 text-secondary small">
+                            <i class="bi bi-person-circle text-muted"></i>
+                            <span>{{ item.creator_name or 'Admin' }}</span>
+                        </div>
+                    </td>
+                    <td class="text-end action-btn">
+                        <div class="d-flex justify-content-end gap-1">
+                            <a href="{{ url_for('admin_product.edit_product', product_id=item.id) }}"
+                               class="btn btn-modern btn-modern-light btn-icon" title="Edit Product">
+                                <i class="bi bi-pencil fs-7"></i>
+                            </a>
+                            <button type="button" class="btn btn-modern btn-modern-danger btn-icon" 
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteConfirmModal"
+                                    data-url="{{ url_for('admin_product.delete_product', product_id=item.id) }}"
+                                    data-name="{{ item.title | e }}" 
+                                    data-type="product" 
+                                    title="Delete Product">
+                                <i class="bi bi-trash fs-7"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center py-5 text-muted">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 56px; height: 56px; background-color: var(--border-subtle); color: var(--text-muted);">
+                            <i class="bi bi-box-seam fs-2"></i>
+                        </div>
+                        <h6 class="fw-bold text-dark mb-1">No products found</h6>
+                        <p class="text-muted small mb-3">Get started by creating your first catalog product.</p>
+                        <a href="{{ url_for('admin_product.add_product') }}" class="btn btn-modern btn-modern-primary">
+                            <i class="bi bi-plus-lg"></i> Add Product
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

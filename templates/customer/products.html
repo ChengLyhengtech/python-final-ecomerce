@@ -1,119 +1,326 @@
 {% extends "customer/layout.html" %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
-    
-    <!-- Sidebar / Filters -->
-    <aside class="w-full lg:w-64 flex-shrink-0 space-y-6">
-        <!-- Categories -->
-        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-            <h4 class="text-lg font-bold text-slate-900 mb-4 pb-3 border-b border-slate-100">Categories</h4>
-            <ul class="space-y-3">
-                <li>
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" name="category" value="men's clothing" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"> 
-                        <span class="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors">Men's Clothing</span>
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" name="category" value="women's clothing" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"> 
-                        <span class="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors">Women's Clothing</span>
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" name="category" value="jewelery" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"> 
-                        <span class="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors">Jewelry</span>
-                    </label>
-                </li>
-                <li>
-                    <label class="flex items-center gap-3 cursor-pointer group">
-                        <input type="checkbox" name="category" value="electronics" class="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"> 
-                        <span class="text-sm text-slate-600 group-hover:text-indigo-600 transition-colors">Electronics</span>
-                    </label>
-                </li>
-            </ul>
-        </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- Price Range -->
-        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-            <h4 class="text-lg font-bold text-slate-900 mb-4 pb-3 border-b border-slate-100">Price Range</h4>
-            <div class="flex items-center gap-2 mb-4">
-                <input type="number" placeholder="Min" name="min_price" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                <span class="text-slate-400">-</span>
-                <input type="number" placeholder="Max" name="max_price" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500">
-            </div>
-            <button class="w-full py-2.5 bg-slate-900 hover:bg-indigo-600 text-white text-sm font-semibold rounded-lg transition-all shadow-sm">Apply Filter</button>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <section class="flex-1 space-y-6">
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200">
-            <h2 class="text-2xl font-bold tracking-tight text-slate-900">All Products Matrix</h2>
-            <div class="relative">
-                <select class="appearance-none bg-white border border-slate-300 text-slate-700 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-medium shadow-sm cursor-pointer">
-                    <option>Default Sorting</option>
-                    <option>Price: Low to High</option>
-                    <option>Price: High to Low</option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
-                    <i class="fas fa-chevron-down text-xs"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Product Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {% for itm in item %}
-            <div class="group flex flex-col bg-white rounded-xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-slate-300 transform hover:-translate-y-1 transition-all duration-300">
-
-                <!-- Product Image Window -->
-                <div class="relative bg-slate-100 aspect-square overflow-hidden w-full p-4">
-                    <a href="{{ url_for('customer.view_product', item_id=itm.id) }}" class="block w-full h-full">
-                        <img src="{{ itm.image }}" alt="{{ itm.title }}" class="w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-500 ease-in-out mix-blend-multiply">
-                    </a>
-                </div>
-
-                <!-- Product Text Configurations -->
-                <div class="p-4 flex-grow flex flex-col justify-between space-y-2">
-                    <div>
-                        <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">{{ itm.category }}</p>
-                        <h4 class="text-sm font-semibold text-slate-800 line-clamp-2 group-hover:text-indigo-600 transition-colors leading-snug">
-                            <a href="{{ url_for('customer.view_product', item_id=itm.id) }}">{{ itm.title }}</a>
-                        </h4>
-                    </div>
-
-                    <div class="flex items-center justify-between pt-2">
-                        <span class="text-base sm:text-lg font-bold text-slate-900">${{ "%.2f"|format(itm.price) }}</span>
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800">
-                            ★ {{ itm.rating.rate }}
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Action Button Matrix Footer -->
-               <div class="p-3 pt-0 grid grid-cols-3 gap-2 border-t border-slate-50 mt-auto">
-                    <button class="inline-flex justify-center items-center py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-colors duration-200" title="Add to Favourites">
-                        <i class="far fa-heart"></i>
-                    </button>
-
-                    <a href="{{ url_for('customer.view_product', item_id=itm.id) }}" class="inline-flex justify-center items-center py-2 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200" title="View Details">
-                        <i class="fas fa-search"></i>
-                    </a>
-
-                    <form action="{{ url_for('customer.add_to_cart', item_id=itm.id) }}" method="POST" class="w-full">
-                        <button type="submit" class="w-full inline-flex justify-center items-center py-2 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-200" title="Add to Cart">
-                            <i class="fas fa-shopping-cart"></i>
-                        </button>
-                    </form>
-                </div>
-
-            </div>
+    <!-- Breadcrumb -->
+    <nav class="flex text-xs sm:text-sm text-slate-500 font-medium mb-6">
+        <a href="{{ url_for('customer.home') }}" class="hover:text-indigo-600 transition-colors">Home</a>
+        <span class="mx-2 text-slate-400">/</span>
+        <span class="text-slate-900 font-bold">Shop All Products</span>
+        {% if selected_category %}
+            {% for cat in categories if cat.id == selected_category %}
+                <span class="mx-2 text-slate-400">/</span>
+                <span class="text-indigo-600 font-bold">{{ cat.name }}</span>
             {% endfor %}
-        </div>
-    </section>
+        {% endif %}
+    </nav>
+
+    <div class="flex flex-col lg:flex-row gap-8">
+        
+        <!-- Sidebar / Filters -->
+        <aside class="w-full lg:w-72 flex-shrink-0 space-y-6">
+            
+            <!-- Search Bar -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                <h4 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <i class="fas fa-search text-indigo-600"></i> Search Products
+                </h4>
+                <form action="{{ url_for('customer.products') }}" method="GET" class="relative">
+                    {% if selected_category %}
+                        <input type="hidden" name="category" value="{{ selected_category }}">
+                    {% endif %}
+                    {% if sort %}
+                        <input type="hidden" name="sort" value="{{ sort }}">
+                    {% endif %}
+                    <input type="text" 
+                           name="q" 
+                           value="{{ search_query or '' }}" 
+                           placeholder="Type product keyword..."
+                           class="w-full pl-3 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                    <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-indigo-600 transition-colors">
+                        <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Categories Filter -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+                    <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fas fa-layer-group text-indigo-600"></i> Categories
+                    </h4>
+                    {% if selected_category %}
+                    <a href="{{ url_for('customer.products', q=search_query, min_price=min_price, max_price=max_price, sort=sort) }}" 
+                       class="text-[11px] font-semibold text-rose-600 hover:underline">
+                        Clear
+                    </a>
+                    {% endif %}
+                </div>
+
+                <ul class="space-y-1 text-sm">
+                    <li>
+                        <a href="{{ url_for('customer.products', q=search_query, min_price=min_price, max_price=max_price, sort=sort) }}" 
+                           class="flex items-center justify-between px-3 py-2 rounded-xl transition-all {{ 'bg-indigo-50 text-indigo-700 font-bold' if not selected_category else 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium' }}">
+                            <span>All Categories</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full {{ 'bg-indigo-200/70 text-indigo-900' if not selected_category else 'bg-slate-100 text-slate-500' }}">
+                                {{ categories|map(attribute='products')|map('length')|sum }}
+                            </span>
+                        </a>
+                    </li>
+                    {% for cat in categories %}
+                    <li>
+                        <a href="{{ url_for('customer.products', category=cat.id, q=search_query, min_price=min_price, max_price=max_price, sort=sort) }}" 
+                           class="flex items-center justify-between px-3 py-2 rounded-xl transition-all {{ 'bg-indigo-50 text-indigo-700 font-bold' if selected_category == cat.id else 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium' }}">
+                            <span class="truncate">{{ cat.name }}</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full {{ 'bg-indigo-200/70 text-indigo-900' if selected_category == cat.id else 'bg-slate-100 text-slate-500' }}">
+                                {{ cat.products|length }}
+                            </span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Price Range Filter -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                <h4 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <i class="fas fa-dollar-sign text-indigo-600"></i> Price Filter
+                </h4>
+                <form action="{{ url_for('customer.products') }}" method="GET" class="space-y-3">
+                    {% if selected_category %}
+                        <input type="hidden" name="category" value="{{ selected_category }}">
+                    {% endif %}
+                    {% if search_query %}
+                        <input type="hidden" name="q" value="{{ search_query }}">
+                    {% endif %}
+                    {% if sort %}
+                        <input type="hidden" name="sort" value="{{ sort }}">
+                    {% endif %}
+
+                    <div class="flex items-center gap-2">
+                        <div class="relative flex-1">
+                            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-bold">$</span>
+                            <input type="number" 
+                                   step="any"
+                                   min="0" 
+                                   name="min_price" 
+                                   value="{{ min_price if min_price is not none else '' }}" 
+                                   placeholder="Min" 
+                                   class="w-full pl-6 pr-2 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+                        </div>
+                        <span class="text-slate-400 font-bold">-</span>
+                        <div class="relative flex-1">
+                            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-bold">$</span>
+                            <input type="number" 
+                                   step="any"
+                                   min="0" 
+                                   name="max_price" 
+                                   value="{{ max_price if max_price is not none else '' }}" 
+                                   placeholder="Max" 
+                                   class="w-full pl-6 pr-2 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full py-2 bg-slate-900 hover:bg-indigo-600 text-white text-xs font-bold rounded-xl transition-all shadow-sm">
+                        Apply Price
+                    </button>
+                    {% if min_price is not none or max_price is not none %}
+                    <a href="{{ url_for('customer.products', category=selected_category, q=search_query, sort=sort) }}" 
+                       class="block text-center text-xs text-slate-500 hover:text-rose-600 transition-colors">
+                        Reset Price Range
+                    </a>
+                    {% endif %}
+                </form>
+            </div>
+
+            <!-- Active Filters Summary Tag Bar -->
+            {% if selected_category or search_query or min_price is not none or max_price is not none %}
+            <div class="p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-indigo-900">Active Filters</span>
+                    <a href="{{ url_for('customer.products') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">Clear All</a>
+                </div>
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                    {% if search_query %}
+                    <span class="inline-flex items-center gap-1 text-[11px] font-semibold bg-white border border-indigo-200 text-indigo-700 px-2 py-0.5 rounded-lg">
+                        "{{ search_query }}"
+                    </span>
+                    {% endif %}
+                    {% if min_price is not none or max_price is not none %}
+                    <span class="inline-flex items-center gap-1 text-[11px] font-semibold bg-white border border-indigo-200 text-indigo-700 px-2 py-0.5 rounded-lg">
+                        ${{ min_price or 0 }} - ${{ max_price or 'Any' }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+        </aside>
+
+        <!-- Main Content Area -->
+        <section class="flex-1 space-y-6">
+            
+            <!-- Controls Bar: Title & Sorting -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200">
+                <div>
+                    <h1 class="text-2xl font-black tracking-tight text-slate-900">
+                        {% if selected_category %}
+                            {% for cat in categories if cat.id == selected_category %}
+                                {{ cat.name }}
+                            {% endfor %}
+                        {% else %}
+                            All Products
+                        {% endif %}
+                    </h1>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                        Showing <span class="font-bold text-slate-800">{{ products|length }}</span> results
+                    </p>
+                </div>
+
+                <!-- Sort Control -->
+                <form id="sortForm" action="{{ url_for('customer.products') }}" method="GET" class="flex items-center gap-2">
+                    {% if selected_category %}
+                        <input type="hidden" name="category" value="{{ selected_category }}">
+                    {% endif %}
+                    {% if search_query %}
+                        <input type="hidden" name="q" value="{{ search_query }}">
+                    {% endif %}
+                    {% if min_price is not none %}
+                        <input type="hidden" name="min_price" value="{{ min_price }}">
+                    {% endif %}
+                    {% if max_price is not none %}
+                        <input type="hidden" name="max_price" value="{{ max_price }}">
+                    {% endif %}
+
+                    <label for="sortSelect" class="text-xs font-semibold text-slate-500 whitespace-nowrap">Sort by:</label>
+                    <div class="relative">
+                        <select id="sortSelect" 
+                                name="sort" 
+                                onchange="document.getElementById('sortForm').submit();"
+                                class="appearance-none bg-white border border-slate-300 text-slate-700 py-2 pl-3 pr-8 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-bold shadow-sm cursor-pointer">
+                            <option value="latest" {{ 'selected' if sort == 'latest' or not sort }}>Latest Arrivals</option>
+                            <option value="price_asc" {{ 'selected' if sort == 'price_asc' }}>Price: Low to High</option>
+                            <option value="price_desc" {{ 'selected' if sort == 'price_desc' }}>Price: High to Low</option>
+                            <option value="title_asc" {{ 'selected' if sort == 'title_asc' }}>Product Name: A to Z</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+                            <i class="fas fa-chevron-down text-[10px]"></i>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Product Grid -->
+            {% if products %}
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-6">
+                {% for prod in products %}
+                <div class="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:border-indigo-200 transform hover:-translate-y-1 transition-all duration-300">
+
+                    <!-- Product Image Window -->
+                    <div class="relative bg-slate-50 aspect-square overflow-hidden w-full flex items-center justify-center p-4">
+                        <a href="{{ url_for('customer.view_product', item_id=prod.id) }}" class="block w-full h-full">
+                            <img src="{{ prod.thumbnail|media_url }}" 
+                                 alt="{{ prod.title }}" 
+                                 onerror="this.onerror=null; this.src='/static/admin/img/no-profile.png';"
+                                 class="w-full h-full object-contain object-center transform group-hover:scale-105 transition-transform duration-500 ease-in-out">
+                        </a>
+
+                        <!-- Stock Status Badge -->
+                        <div class="absolute top-3 left-3 z-10">
+                            {% if prod.stock <= 0 %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-600 text-white shadow-sm">
+                                    Sold Out
+                                </span>
+                            {% elif prod.stock <= 5 %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500 text-slate-950 shadow-sm">
+                                    {{ prod.stock }} Left
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-600 text-white shadow-sm">
+                                    In Stock
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Wishlist Floating Icon -->
+                        <div class="absolute top-3 right-3 z-10">
+                            <form action="{{ url_for('customer.toggle_wishlist', item_id=prod.id) }}" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <button type="submit" 
+                                        class="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm shadow flex items-center justify-center transition-all duration-200 hover:scale-110 {{ 'text-rose-500' if prod.id in wishlist_ids else 'text-slate-400 hover:text-rose-500' }}"
+                                        title="{{ 'Remove from Wishlist' if prod.id in wishlist_ids else 'Add to Wishlist' }}">
+                                    <i class="{{ 'fas fa-heart text-rose-500' if prod.id in wishlist_ids else 'far fa-heart' }} text-sm"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="p-4 flex-grow flex flex-col justify-between space-y-2">
+                        <div>
+                            <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1">
+                                {{ prod.category.name if prod.category else 'General' }}
+                            </p>
+                            <h3 class="text-sm font-semibold text-slate-800 line-clamp-2 group-hover:text-indigo-600 transition-colors leading-snug">
+                                <a href="{{ url_for('customer.view_product', item_id=prod.id) }}">{{ prod.title }}</a>
+                            </h3>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-2">
+                            <span class="text-base sm:text-lg font-black text-slate-900">${{ "%.2f"|format(prod.price) }}</span>
+                            <span class="text-[11px] font-medium text-slate-400">Stock: {{ prod.stock }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Button Matrix Footer -->
+                    <div class="p-3 pt-0 grid grid-cols-2 gap-2 border-t border-slate-100 mt-auto bg-slate-50/50">
+                        <a href="{{ url_for('customer.view_product', item_id=prod.id) }}" 
+                           class="inline-flex justify-center items-center py-2 px-3 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900 text-xs font-bold transition-colors shadow-sm"
+                           title="View Details">
+                            <i class="fas fa-eye mr-1.5 text-xs"></i> View
+                        </a>
+
+                        {% if prod.stock > 0 %}
+                        <form action="{{ url_for('customer.add_to_cart', item_id=prod.id) }}" method="POST" class="w-full">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" 
+                                    class="w-full inline-flex justify-center items-center py-2 px-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-xs font-bold shadow-sm hover:shadow transition-all"
+                                    title="Add to Cart">
+                                <i class="fas fa-shopping-cart mr-1.5 text-xs"></i> Add
+                            </button>
+                        </form>
+                        {% else %}
+                        <button disabled 
+                                class="w-full inline-flex justify-center items-center py-2 px-3 rounded-xl bg-slate-200 text-slate-400 text-xs font-bold cursor-not-allowed">
+                            Sold Out
+                        </button>
+                        {% endif %}
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Empty Search/Filter State -->
+            <div class="bg-white rounded-3xl border border-slate-200 p-12 text-center max-w-lg mx-auto space-y-4">
+                <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl mx-auto">
+                    <i class="fas fa-filter-circle-xmark"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800">No matching products found</h3>
+                <p class="text-xs sm:text-sm text-slate-500">
+                    We couldn't find any products matching your selected filters or search keyword. Try clearing filters to see all products.
+                </p>
+                <div>
+                    <a href="{{ url_for('customer.products') }}" 
+                       class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow transition-colors">
+                        <i class="fas fa-rotate-left"></i> Reset All Filters
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+        </section>
+
+    </div>
 </div>
 {% endblock %}

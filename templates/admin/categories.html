@@ -1,46 +1,91 @@
 {% extends 'admin/base.html' %}
 
-{% block title %}Categories{% endblock %}
+{% block title %}Categories Management{% endblock %}
 
 {% block content %}
 <div class="page-header">
-    <h1>Categories</h1>
-    <a href="{{ url_for('admin_category.add_category') }}" class="btn btn-modern btn-modern-primary"><i class="bi bi-plus-lg"></i> Add New Category</a>
+    <div>
+        <h1 class="page-title">Categories</h1>
+        <p class="page-subtitle">Organize and group products across your catalog.</p>
+    </div>
+    <a href="{{ url_for('admin_category.add_category') }}" class="btn btn-modern btn-modern-primary">
+        <i class="bi bi-plus-lg"></i>
+        <span>Add New Category</span>
+    </a>
 </div>
 
-<div class="row justify-content-center">
-    <div class="col-md-10 col-lg-8">
-        <div class="table-modern">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>Category Name</th>
-                        <th class="text-end">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for category in categories %}
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center"
-                                    style="width: 40px; height: 40px;">
-                                    <i class="bi bi-tag-fill fs-5"></i>
-                                </div>
-                                <span class="text-capitalize fw-semibold fs-6">{{ category }}</span>
-                            </div>
-                        </td>
-                        <td class="text-end">
-                            <div class="d-flex justify-content-end gap-2">
-                                <a href="{{ url_for('admin_category.edit_category', category_id=loop.index) }}" class="btn btn-sm btn-modern btn-modern-light"><i class="bi bi-pencil"></i> Edit</a>
-                                <button type="button" class="btn btn-sm btn-modern btn-modern-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-url="/admin/categories/delete/{{ loop.index }}" data-name="{{ category | e }}" data-type="category"><i class="bi bi-trash"></i> Delete</button>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<div class="table-modern">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 60px;">Icon</th>
+                    <th>Category Name</th>
+                    <th>Description</th>
+                    <th>Associated Products</th>
+                    <th class="text-end" style="width: 110px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cat in categories %}
+                <tr>
+                    <td>
+                        <div class="table-thumbnail" style="background-color: var(--admin-primary-light);">
+                            {% if cat.image %}
+                                <img src="{{ cat.image | media_url }}" alt="{{ cat.name }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <i class="bi bi-tag text-primary fs-5" style="display: none;"></i>
+                            {% else %}
+                                <i class="bi bi-tag text-primary fs-5"></i>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="text-capitalize fw-semibold text-dark">{{ cat.name }}</span>
+                    </td>
+                    <td>
+                        <span class="text-muted small text-truncate d-inline-block" style="max-width: 340px;">
+                            {{ cat.description or '—' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge badge-soft-info px-2 py-1">
+                            {{ cat.product_count or 0 }} products
+                        </span>
+                    </td>
+                    <td class="text-end action-btn">
+                        <div class="d-flex justify-content-end gap-1">
+                            <a href="{{ url_for('admin_category.edit_category', category_id=cat.id) }}" 
+                               class="btn btn-modern btn-modern-light btn-icon" title="Edit Category">
+                                <i class="bi bi-pencil fs-7"></i>
+                            </a>
+                            <button type="button" class="btn btn-modern btn-modern-danger btn-icon" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteConfirmModal" 
+                                    data-url="{{ url_for('admin_category.delete_category', category_id=cat.id) }}" 
+                                    data-name="{{ cat.name | e }}" 
+                                    data-type="category" 
+                                    title="Delete Category">
+                                <i class="bi bi-trash fs-7"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 56px; height: 56px; background-color: var(--border-subtle); color: var(--text-muted);">
+                            <i class="bi bi-tags fs-2"></i>
+                        </div>
+                        <h6 class="fw-bold text-dark mb-1">No categories found</h6>
+                        <p class="text-muted small mb-3">Create categories to structure your catalog.</p>
+                        <a href="{{ url_for('admin_category.add_category') }}" class="btn btn-modern btn-modern-primary">
+                            <i class="bi bi-plus-lg"></i> Add Category
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

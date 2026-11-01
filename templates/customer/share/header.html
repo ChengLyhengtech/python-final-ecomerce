@@ -40,11 +40,13 @@
             <!-- Favorites Action Link -->
             <a href="{{ url_for('customer.favorites') }}"
                title="Favorites"
-               class="relative p-2 rounded-lg transition-colors group {{ 'text-indigo-600 bg-indigo-50/60' if request.endpoint == 'customer.favorites' else 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' }}">
+               class="relative p-2 rounded-lg transition-colors group {{ 'text-indigo-600 bg-indigo-50/60' if request.endpoint in ['customer.favorites', 'customer.wishlist'] else 'text-slate-500 hover:bg-slate-100 hover:text-slate-900' }}">
                 <i class="fas fa-heart text-lg"></i>
-                <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-600 text-[10px] font-bold text-white ring-2 ring-white">
-                    3
+                {% if wishlist_count and wishlist_count > 0 %}
+                <span class="wishlist-badge absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-600 text-[10px] font-bold text-white ring-2 ring-white">
+                    {{ wishlist_count }}
                 </span>
+                {% endif %}
             </a>
 
             <!-- Cart Action Link -->

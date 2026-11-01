@@ -1,16 +1,33 @@
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1200;">
       {% for category, message in messages %}
-        {% set bg_class = 'bg-success text-white' if category == 'success' else ('bg-danger text-white' if category == 'danger' else 'bg-primary text-white') %}
-        {% set icon_class = 'bi-check-circle-fill' if category == 'success' else ('bi-exclamation-triangle-fill' if category == 'danger' else 'bi-info-circle-fill') %}
-        <div class="toast align-items-center {{ bg_class }} border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4000">
-          <div class="d-flex p-2">
-            <div class="toast-body d-flex align-items-center gap-2">
-              <i class="bi {{ icon_class }} fs-5"></i>
-              <span>{{ message }}</span>
+        {% set is_success = (category == 'success') %}
+        {% set is_danger = (category in ['danger', 'error']) %}
+        {% set is_warning = (category == 'warning') %}
+        <div class="toast align-items-center shadow-lg border-0 mb-2 rounded-3 text-white overflow-hidden" 
+             style="background: {% if is_success %}#064e3b{% elif is_danger %}#7f1d1d{% elif is_warning %}#78350f{% else %}#1e293b{% endif %}; min-width: 320px;"
+             role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4500">
+          <div class="d-flex align-items-center p-3">
+            <div class="d-flex align-items-center gap-3 flex-grow-1">
+              <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                   style="width: 32px; height: 32px; background: rgba(255,255,255,0.15); flex-shrink: 0;">
+                {% if is_success %}
+                  <i class="bi bi-check2 text-emerald-300 fs-5"></i>
+                {% elif is_danger %}
+                  <i class="bi bi-exclamation-octagon text-rose-300 fs-5"></i>
+                {% elif is_warning %}
+                  <i class="bi bi-exclamation-triangle text-amber-300 fs-5"></i>
+                {% else %}
+                  <i class="bi bi-info-circle text-blue-300 fs-5"></i>
+                {% endif %}
+              </div>
+              <div>
+                <div class="fw-semibold text-white fs-8 text-capitalize">{{ category }}</div>
+                <div class="text-white-50 small lh-sm">{{ message }}</div>
+              </div>
             </div>
-            <button type="button" class="btn-close btn-close-white m-auto me-2" data-bs-dismiss="toast" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
           </div>
         </div>
       {% endfor %}

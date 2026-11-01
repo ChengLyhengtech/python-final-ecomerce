@@ -1,41 +1,343 @@
 {% extends 'admin/base.html' %}
 
-{% block title %}Edit Product{% endblock %}
+{% block title %}Edit Product: {{ product.title }}{% endblock %}
 
 {% block content %}
 <div class="page-header">
-    <h1>Edit Product</h1>
-    <a href="{{ url_for('admin_product.admin_products') }}" class="btn btn-modern btn-modern-light"><i class="bi bi-arrow-left"></i> Back to Products</a>
-</div>
-
-<div class="row justify-content-center">
-    <div class="col-md-10 col-lg-8">
-        <div class="card card-modern p-4">
-            <form action="{{ url_for('admin_product.edit_product', product_id=item.id) }}" method="POST">
-                <div class="row g-4">
-                    <div class="col-md-12">
-                        <label class="form-label fw-semibold text-muted">Title</label>
-                        <input type="text" name="title" class="form-control bg-light" value="{{ item.title }}" required style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold text-muted">Price ($)</label>
-                        <input type="number" step="0.01" name="price" class="form-control bg-light" value="{{ item.price }}" required style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold text-muted">Category</label>
-                        <input type="text" name="category" class="form-control bg-light" value="{{ item.category }}" required style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label fw-semibold text-muted">Image URL</label>
-                        <input type="url" name="image" class="form-control bg-light" value="{{ item.image }}" style="border-radius: 0.5rem; border: 1px solid #e5e7eb;">
-                    </div>
-                </div>
-                <div class="d-flex justify-content-end gap-2 mt-5">
-                    <a href="{{ url_for('admin_product.admin_products') }}" class="btn btn-modern btn-modern-light">Cancel</a>
-                    <button type="submit" class="btn btn-modern btn-modern-primary">Save Changes</button>
-                </div>
-            </form>
-        </div>
+    <div>
+        <h1 class="page-title">Edit Product</h1>
+        <p class="page-subtitle">Update product specifications, inventory, thumbnail, and photo gallery.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <a href="{{ url_for('admin_product.product_details', product_id=product.id) }}" class="btn btn-modern btn-modern-light">
+            <i class="bi bi-eye"></i>
+            <span>View Details</span>
+        </a>
+        <a href="{{ url_for('admin_product.admin_products') }}" class="btn btn-modern btn-modern-light">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Products</span>
+        </a>
     </div>
 </div>
+
+<form action="{{ url_for('admin_product.edit_product', product_id=product.id) }}" method="POST" enctype="multipart/form-data" id="editProductForm">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+    <div class="row g-4">
+        <!-- Left Column: Product Details & Gallery -->
+        <div class="col-lg-8">
+            <!-- Basic Details Card -->
+            <div class="card card-modern p-4 mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                    <i class="bi bi-info-circle text-primary"></i>
+                    <h5 class="fw-bold mb-0 text-dark" style="font-size: 1rem;">General Information</h5>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Product Title <span class="text-danger">*</span></label>
+                        <input type="text" name="title" class="form-control form-control-lg" 
+                               value="{{ product.title }}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Category <span class="text-danger">*</span></label>
+                        <select name="category_id" class="form-select" required>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}" {% if cat.id == product.category_id %}selected{% endif %}>
+                                    {{ cat.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Stock Quantity <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-boxes"></i></span>
+                            <input type="number" name="stock" class="form-control" 
+                                   value="{{ product.stock }}" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Cost Price ($)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" step="0.01" min="0" name="cost" class="form-control" 
+                                   value="{{ product.cost }}">
+                        </div>
+                        <span class="text-muted fs-8 d-block mt-1">Internal cost for margin tracking.</span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Selling Price ($) <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" step="0.01" min="0" name="price" class="form-control" 
+                                   value="{{ product.price }}" required>
+                        </div>
+                        <span class="text-muted fs-8 d-block mt-1">Public storefront customer price.</span>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="4">{{ product.description or '' }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multi-Image Gallery Card -->
+            <div class="card card-modern p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-images text-primary"></i>
+                        <h5 class="fw-bold mb-0 text-dark" style="font-size: 1rem;">Product Gallery</h5>
+                    </div>
+                    <span class="badge badge-soft-primary">{{ product.images|length }} existing image(s)</span>
+                </div>
+
+                <!-- Existing Images Grid -->
+                {% if product.images %}
+                <h6 class="fw-semibold text-secondary fs-8 text-uppercase mb-2" style="letter-spacing: 0.05em;">Current Gallery Photos</h6>
+                <div class="row g-3 mb-4">
+                    {% for img in product.images %}
+                    <div class="col-6 col-sm-4 col-md-3">
+                        <div class="gallery-card">
+                            <img src="{{ img.image_url | media_url }}" alt="Gallery Image">
+                            <button type="button" 
+                                    class="gallery-card-remove" 
+                                    title="Delete this image"
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteConfirmModal" 
+                                    data-url="{{ url_for('admin_product.delete_product_image', product_id=product.id, image_id=img.id) }}" 
+                                    data-name="Image #{{ loop.index }}" 
+                                    data-type="gallery image">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            <div class="p-2 text-truncate small text-muted" style="font-size: 0.75rem;">
+                                Image #{{ loop.index }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Add More Photos Dropzone -->
+                <h6 class="fw-semibold text-secondary fs-8 text-uppercase mb-2" style="letter-spacing: 0.05em;">Upload Additional Photos</h6>
+                <div class="upload-dropzone p-4 text-center position-relative" id="multiImageDropzone">
+                    <input type="file" name="images" id="multiImageInput" multiple accept="image/*" class="d-none">
+
+                    <div class="py-2">
+                        <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-2" 
+                             style="width: 48px; height: 48px; background-color: var(--admin-primary-light); color: var(--admin-primary);">
+                            <i class="bi bi-cloud-arrow-up fs-3"></i>
+                        </div>
+                        <h6 class="fw-semibold text-dark mb-1 fs-7">Click to select more gallery photos</h6>
+                        <p class="text-muted small mb-0 fs-8">PNG, JPG, WEBP, GIF up to 16MB</p>
+                    </div>
+                </div>
+
+                <!-- New Photos Live Preview -->
+                <div class="row g-3 mt-3 d-none" id="galleryPreviewContainer"></div>
+            </div>
+        </div>
+
+        <!-- Right Column: Thumbnail & Actions -->
+        <div class="col-lg-4">
+            <!-- Thumbnail Upload Card -->
+            <div class="card card-modern p-4 mb-4">
+                <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                    <i class="bi bi-image text-primary"></i>
+                    <h5 class="fw-bold mb-0 text-dark" style="font-size: 1rem;">Cover Thumbnail</h5>
+                </div>
+
+                <!-- Thumbnail Dropzone -->
+                <div class="thumbnail-dropzone p-3 text-center position-relative" id="thumbDropzone"
+                     style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <input type="file" name="thumbnail" id="thumbnailInput" accept="image/*" class="d-none">
+
+                    <div id="thumbPreviewWrapper" class="w-100 position-relative">
+                        <div class="border rounded-3 p-1 bg-white shadow-xs mb-2" style="max-height: 200px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            <img id="thumbPreviewImg" src="{{ product.thumbnail | media_url }}" alt="{{ product.title }}" style="max-width: 100%; max-height: 180px; object-fit: contain;">
+                        </div>
+                        <span class="btn btn-sm btn-modern-light w-100 py-1" style="font-size: 0.8rem;">
+                            <i class="bi bi-arrow-repeat"></i> Change Cover Photo
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Action Card -->
+            <div class="card card-modern p-4">
+                <h6 class="fw-bold text-dark mb-2">Save Changes</h6>
+                <p class="text-muted small mb-3">Changes will immediately reflect on the live customer storefront.</p>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-modern btn-modern-primary py-2">
+                        <i class="bi bi-check2-circle fs-5"></i>
+                        <span>Save & Update Product</span>
+                    </button>
+                    <a href="{{ url_for('admin_product.admin_products') }}" class="btn btn-modern btn-modern-light py-2">
+                        Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block content_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Thumbnail upload preview
+    const thumbDropzone = document.getElementById('thumbDropzone');
+    const thumbnailInput = document.getElementById('thumbnailInput');
+    const thumbPreviewImg = document.getElementById('thumbPreviewImg');
+
+    thumbDropzone.addEventListener('click', (e) => {
+        if (e.target !== thumbnailInput) {
+            thumbnailInput.click();
+        }
+    });
+
+    thumbnailInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                thumbPreviewImg.src = e.target.result;
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    // Multi-image upload preview
+    const editProductForm = document.getElementById('editProductForm');
+    const multiDropzone = document.getElementById('multiImageDropzone');
+    const multiImageInput = document.getElementById('multiImageInput');
+    const galleryContainer = document.getElementById('galleryPreviewContainer');
+
+    let selectedGalleryFiles = [];
+
+    multiDropzone.addEventListener('click', (e) => {
+        if (e.target !== multiImageInput) {
+            multiImageInput.click();
+        }
+    });
+
+    multiImageInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+            Array.from(this.files).forEach(file => {
+                const exists = selectedGalleryFiles.some(f => 
+                    f.name === file.name && f.size === file.size && f.lastModified === file.lastModified
+                );
+                if (!exists) {
+                    selectedGalleryFiles.push(file);
+                }
+            });
+            syncGalleryFilesAndRender();
+        }
+    });
+
+    function removeGalleryFile(indexToRemove) {
+        selectedGalleryFiles.splice(indexToRemove, 1);
+        syncGalleryFilesAndRender();
+    }
+
+    function syncGalleryFilesAndRender() {
+        try {
+            const dt = new DataTransfer();
+            selectedGalleryFiles.forEach(f => dt.items.add(f));
+            multiImageInput.files = dt.files;
+        } catch (err) {
+            console.warn('DataTransfer sync warning:', err);
+        }
+        renderNewGalleryPreviews();
+    }
+
+    function renderNewGalleryPreviews() {
+        galleryContainer.innerHTML = '';
+        if (selectedGalleryFiles.length === 0) {
+            galleryContainer.classList.add('d-none');
+            return;
+        }
+
+        galleryContainer.classList.remove('d-none');
+
+        selectedGalleryFiles.forEach((file, index) => {
+            const col = document.createElement('div');
+            col.className = 'col-6 col-sm-4 col-md-3';
+
+            const card = document.createElement('div');
+            card.className = 'gallery-card';
+
+            const img = document.createElement('img');
+            const reader = new FileReader();
+            reader.onload = (e) => { img.src = e.target.result; };
+            reader.readAsDataURL(file);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'gallery-card-remove';
+            removeBtn.innerHTML = '<i class="bi bi-x"></i>';
+            removeBtn.title = 'Remove photo';
+
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                removeGalleryFile(index);
+            });
+
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'p-2 text-truncate small text-muted';
+            infoDiv.style.fontSize = '0.75rem';
+            infoDiv.textContent = file.name;
+
+            card.appendChild(img);
+            card.appendChild(removeBtn);
+            card.appendChild(infoDiv);
+            col.appendChild(card);
+            galleryContainer.appendChild(col);
+        });
+    }
+
+    editProductForm.addEventListener('submit', function(e) {
+        if (!this.checkValidity()) {
+            return;
+        }
+        syncGalleryFilesAndRender();
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Updating product...';
+        }
+    });
+
+    multiDropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        multiDropzone.classList.add('dragover');
+    });
+
+    multiDropzone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        multiDropzone.classList.remove('dragover');
+    });
+
+    multiDropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        multiDropzone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            Array.from(e.dataTransfer.files).forEach(file => {
+                const exists = selectedGalleryFiles.some(f => 
+                    f.name === file.name && f.size === file.size && f.lastModified === file.lastModified
+                );
+                if (!exists) {
+                    selectedGalleryFiles.push(file);
+                }
+            });
+            syncGalleryFilesAndRender();
+        }
+    });
+});
+</script>
 {% endblock %}
